@@ -140,6 +140,16 @@ class AcademicArena extends Program {
         applyPatch(main, patch, curH, curW-1);     
     }
 
+    void moveTop(Screen main, Screen patch, int curH, int curW) {
+        removePatch(main, patch, curH, curW);  
+        applyPatch(main, patch, curH - 1, curW);     
+    }
+
+    void moveBottom(Screen main, Screen patch, int curH, int curW) {
+        removePatch(main, patch, curH, curW);  
+        applyPatch(main, patch, curH + 1, curW);     
+    }
+
     // void moveLeft(Screen main, Screen patch, int curH, int curW, int w) {
     //     for (int i = curW; i > w-1; i--) {
             
@@ -160,8 +170,18 @@ class AcademicArena extends Program {
         for (int i = -150; i < 40; i++) {
             moveRight(main, partA, 10, i);
             moveLeft(main, partB, 25, main.width-(i+125));
-            print(toString(main));
+            println(toString(main));
         } 
+
+        print("             Press enter to start                ");
+        readString();
+
+        for (int i = 0; i < 50; i++) {
+            moveTop(main, partA, 10 - i, 40) ;
+            moveBottom(main, partB, 25 + i, main.width -(40 + 125));
+            println(toString(main));
+        }
+
 
     }
 
