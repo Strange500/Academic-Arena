@@ -4,6 +4,7 @@ class AcademicArena extends Program {
     String RESSOURCESDIR = "ressources";
     String LOGOPARTA = RESSOURCESDIR + "/" + "academic.txt";
     String LOGOPARTB = RESSOURCESDIR + "/" + "arena.txt";
+    String PLAYER = RESSOURCESDIR + "/" + "player.txt";
 
 
     Screen newScreen(int height, int width) {
@@ -185,22 +186,61 @@ class AcademicArena extends Program {
 
     }
 
+    void mainMenue(Screen main) {
+        Screen choice = newScreen(25, 120);
+        Screen player = newScreen(25, 114);
+
+        Screen player_ASCII = loadASCII(fileAsString(PLAYER));
+        applyPatch(player, player_ASCII, 2, 20);
+
+        applyPatch(main, player, 25, 120);
+
+        println(toString(main));
+        
+
+    }
+
 
 
 
     void algorithm() {
         Screen sr = newScreen(50,236);
-        String f = fileAsString("ressources/academic.txt");
-        Screen s = loadASCII(f);
-        text("red");
-        // print(toString(s));
-        f = fileAsString("ressources/arena.txt");
-        s = loadASCII(f);
-        text("yellow");
-        // print(toString(s));
+        // String f = fileAsString("ressources/academic.txt");
+        // Screen s = loadASCII(f);
+        // text("red");
+        // // print(toString(s));
+        // f = fileAsString("ressources/arena.txt");
+        // s = loadASCII(f);
+        // text("yellow");
+        // // print(toString(s));
         afficherLogo(sr);
+        mainMenue(sr);
     }
+    // boolean finished = false;
 
-
+    // void algorithm() {
+    //     // On active l’écoute des évènements clavier
+    //     enableKeyTypedInConsole(true);
+    //     while (!finished) {
+    //         delay(500);
+    //         }
+    //     }
+    //     // Fonction définissant ce qui doit être fait
+    //     // lorsqu’une touche est pressée par l’utilisateur
+    //     void keyTypedInConsole(char key) {
+    //         println("You pressed key with code: " + key
+    //         + " (press 'q' to quit)");
+    //         switch (key) {
+    //             // ANSI_UP est une constante correspondant
+    //             // au code ASCII de la flèche HAUT
+    //             case ANSI_UP:
+    //                 println("That's the UP arrow !");
+    //                 break;
+    //             // …
+    //             case 'q' :
+    //                 println("Ok, quitting ...");
+    //                 finished = true;
+    //             }
+    //     }
 
 }
