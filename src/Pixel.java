@@ -1,4 +1,3 @@
 class Pixel {
-    char c;
-    String color;
+    String c;
 }

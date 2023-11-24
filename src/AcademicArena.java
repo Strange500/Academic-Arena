@@ -3,23 +3,33 @@ class AcademicArena extends Program {
 
 
     char EMPTY = ' ';
-    Pixel EMPTYPIXEL = newPixel(' ', ANSI_TEXT_DEFAULT_COLOR);
+    Pixel EMPTYPIXEL = newPixelEmpty();
     String RESSOURCESDIR = "ressources";
     String LOGOPARTA = RESSOURCESDIR + "/" + "academic.txt";
     String LOGOPARTB = RESSOURCESDIR + "/" + "arena.txt";
     String PLAYER = RESSOURCESDIR + "/" + "player.txt";
 
+    char[] list_EMPTY = new char[]{' ', ' ', ' ', ' ', ' ',' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '　', '⠀'};
+
+    boolean isEmpty(char c) {
+        int cpt = 0;
+        boolean result = false;
+        while (cpt < length(list_EMPTY) && !result) {
+            result = c == list_EMPTY[cpt];
+            cpt = cpt + 1;
+        }
+        return result;
+    }
+
     Pixel newPixel(char c, String color) {
         Pixel p = new Pixel();
-        p.c = c;
-        p.color = color;
+        p.c = color + c;
         return p;
     }
 
     Pixel newPixelEmpty() {
         Pixel p = new Pixel();
-        p.c = EMPTY;
-        p.color = ANSI_TEXT_DEFAULT_COLOR;
+        p.c = ANSI_TEXT_DEFAULT_COLOR + EMPTY;
         return p;
     }
 
@@ -37,7 +47,11 @@ class AcademicArena extends Program {
     }
 
     String toString(Pixel pixel) {
-        return pixel.color + pixel.c;
+        return pixel.c;
+    }
+
+    boolean equals(Pixel p1, Pixel p2) {
+        return charAt(p1.c, length(p1.c) - 1) ==  charAt(p2.c, length(p2.c) - 1);
     }
 
     String toString(Screen screen) {
@@ -98,6 +112,9 @@ class AcademicArena extends Program {
         for (int i = 0; i < height; i++) {
             while ( current != '\n' && cpt < length(text) && cptW < width) {
                 current = charAt(text, cpt);
+                if (isEmpty(current)) {
+                    current = ' ';
+                }
                 screen[i][cptW] = newPixel(current, color);
                 cpt = cpt + 1;
                 cptW = cptW + 1;
@@ -119,6 +136,31 @@ class AcademicArena extends Program {
             int cptW_patch = 0;
             while (cptH_patch < length(patch.screen, 1) && cptH_main < length(main.screen, 1)) {
                 while (cptW_patch < length(patch.screen, 2) && cptW_main < length(main.screen, 2)) {
+                    if (cptH_main >= 0 && cptW_main >= 0) {
+                        main.screen[cptH_main][cptW_main] = patch.screen[cptH_patch][cptW_patch];
+                    }
+                    cptW_main = cptW_main + 1;
+                    cptW_patch = cptW_patch + 1;
+                }
+                cptH_main = cptH_main + 1;
+                cptH_patch = cptH_patch + 1;
+                cptW_main = w;
+                cptW_patch = 0;
+            }
+            
+        }
+
+    }
+
+    void applyPatch(Screen main, Screen patch, int h, int w, boolean eraseNonEmpty) {
+        if ((w < main.width) && h < main.height) {
+            int cptH_main = h;
+            int cptH_patch = 0;
+            int cptW_main = w;
+            int cptW_patch = 0;
+            while (cptH_patch < length(patch.screen, 1) && cptH_main < length(main.screen, 1)) {
+                while (cptW_patch < length(patch.screen, 2) && cptW_main < length(main.screen, 2)) {
+                    if (!eraseNonEmpty && !equals(patch.screen[cptH_patch][cptW_patch], EMPTYPIXEL))
                     if (cptH_main >= 0 && cptW_main >= 0) {
                         main.screen[cptH_main][cptW_main] = patch.screen[cptH_patch][cptW_patch];
                     }
@@ -210,11 +252,11 @@ class AcademicArena extends Program {
         print("             Press enter to start                ");
         readString();
 
-        for (int i = 0; i < 50; i++) {
-            moveTop(main, partA, posy_A - i, posX_A) ;
-            moveBottom(main, partB, posy_B + i, posX_B);
-            println(toString(main));
-        }
+        // for (int i = 0; i < 50; i++) {
+        //     moveTop(main, partA, posy_A - i, posX_A) ;
+        //     moveBottom(main, partB, posy_B + i, posX_B);
+        //     println(toString(main));
+        // }
 
 
     }
@@ -226,7 +268,7 @@ class AcademicArena extends Program {
         Screen player_ASCII = loadASCII(fileAsString(PLAYER), ANSI_BLUE);
         applyPatch(player, player_ASCII, 2, 20);
 
-        applyPatch(main, player, 25, 120);
+        applyPatch(main, player, 25, 120, false);
 
         println(toString(main));
         
@@ -249,6 +291,7 @@ class AcademicArena extends Program {
 
         afficherLogo(sr);
         mainMenue(sr);
+        // println((isEmpty('⠀')));
 
     }
     // boolean finished = false;
