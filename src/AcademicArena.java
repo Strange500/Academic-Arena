@@ -1,23 +1,43 @@
 class AcademicArena extends Program {
 
+
+
     char EMPTY = ' ';
+    Pixel EMPTYPIXEL = newPixel(' ', ANSI_TEXT_DEFAULT_COLOR);
     String RESSOURCESDIR = "ressources";
     String LOGOPARTA = RESSOURCESDIR + "/" + "academic.txt";
     String LOGOPARTB = RESSOURCESDIR + "/" + "arena.txt";
     String PLAYER = RESSOURCESDIR + "/" + "player.txt";
 
+    Pixel newPixel(char c, String color) {
+        Pixel p = new Pixel();
+        p.c = c;
+        p.color = color;
+        return p;
+    }
+
+    Pixel newPixelEmpty() {
+        Pixel p = new Pixel();
+        p.c = EMPTY;
+        p.color = ANSI_TEXT_DEFAULT_COLOR;
+        return p;
+    }
 
     Screen newScreen(int height, int width) {
         Screen sr = new Screen();
         sr.height = height;
         sr.width = width;
-        sr.screen = new char[height][width];
+        sr.screen = new Pixel[height][width];
         for (int i = 0; i < length(sr.screen, 1); i++) {
             for (int j = 0; j < length(sr.screen, 2); j++) {
-                sr.screen[i][j] = EMPTY;
+                sr.screen[i][j] = newPixelEmpty();
             }
         }
         return sr;
+    }
+
+    String toString(Pixel pixel) {
+        return pixel.color + pixel.c;
     }
 
     String toString(Screen screen) {
@@ -25,7 +45,7 @@ class AcademicArena extends Program {
         for (int i = 0; i < length(screen.screen, 1); i++) {
 
             for (int j = 0; j < length(screen.screen, 2); j++) {
-                result = result + screen.screen[i][j];
+                result = result + toString(screen.screen[i][j]);
             }
             result = result + '\n';
         }
@@ -68,17 +88,17 @@ class AcademicArena extends Program {
         return result;
     }
 
-    Screen loadASCII(String text) {
+    Screen loadASCII(String text, String color) {
         int height = count(text, '\n');
         int width = length(substring(text, 0, IndexFirst(text, '\n')));
-        char[][] screen = new char[height][width];
+        Pixel[][] screen = new Pixel[height][width];
         int cptW = 0;
         char current = '\0';
         int cpt = 0;
         for (int i = 0; i < height; i++) {
             while ( current != '\n' && cpt < length(text) && cptW < width) {
                 current = charAt(text, cpt);
-                screen[i][cptW] = current;
+                screen[i][cptW] = newPixel(current, color);
                 cpt = cpt + 1;
                 cptW = cptW + 1;
             }
@@ -164,13 +184,26 @@ class AcademicArena extends Program {
 
     // }
 
-    void afficherLogo(Screen main){
-        Screen partA = loadASCII(fileAsString(LOGOPARTA));
-        Screen partB = loadASCII(fileAsString(LOGOPARTB));
+    // void drawVerticalLine(Screen main, int w) {
+    //     Screen line = newScreen(main.height, 1);
+    //     for (int i = 0; i < line.height; i++) {
 
-        for (int i = -150; i < 40; i++) {
-            moveRight(main, partA, 10, i);
-            moveLeft(main, partB, 25, main.width-(i+125));
+    //     }
+    // }
+
+    void afficherLogo(Screen main){
+        Screen partA = loadASCII(fileAsString(LOGOPARTA), ANSI_RED);
+        Screen partB = loadASCII(fileAsString(LOGOPARTB), ANSI_YELLOW);
+        int posX_A = -150;
+        int posy_A = 10;
+        int posX_B = main.width - (posX_A +  125);
+        int posy_B = 25;
+
+        for (int i = posX_A; i < 20; i++) {
+            posX_A = posX_A + 1;
+            posX_B = posX_B - 1;
+            moveRight(main, partA, posy_A, i);
+            moveLeft(main, partB, posy_B, posX_B);
             println(toString(main));
         } 
 
@@ -178,8 +211,8 @@ class AcademicArena extends Program {
         readString();
 
         for (int i = 0; i < 50; i++) {
-            moveTop(main, partA, 10 - i, 40) ;
-            moveBottom(main, partB, 25 + i, main.width -(40 + 125));
+            moveTop(main, partA, posy_A - i, posX_A) ;
+            moveBottom(main, partB, posy_B + i, posX_B);
             println(toString(main));
         }
 
@@ -190,7 +223,7 @@ class AcademicArena extends Program {
         Screen choice = newScreen(25, 120);
         Screen player = newScreen(25, 114);
 
-        Screen player_ASCII = loadASCII(fileAsString(PLAYER));
+        Screen player_ASCII = loadASCII(fileAsString(PLAYER), ANSI_BLUE);
         applyPatch(player, player_ASCII, 2, 20);
 
         applyPatch(main, player, 25, 120);
@@ -204,7 +237,7 @@ class AcademicArena extends Program {
 
 
     void algorithm() {
-        Screen sr = newScreen(50,236);
+        Screen sr = newScreen(50,204);
         // String f = fileAsString("ressources/academic.txt");
         // Screen s = loadASCII(f);
         // text("red");
@@ -213,8 +246,10 @@ class AcademicArena extends Program {
         // s = loadASCII(f);
         // text("yellow");
         // // print(toString(s));
+
         afficherLogo(sr);
         mainMenue(sr);
+
     }
     // boolean finished = false;
 
