@@ -394,10 +394,20 @@ class AcademicArena extends Program {
         while (pos != 0) {
             pos = hchoice - midleh;
             if (pos < 0) {
+                if (pos < -2) {
+                    moveBottom(main, list_perso[r-1], hchoice, wchoice );
+                    moveBottom(main, list_perso[r-1], hchoice+1, wchoice);
+                    hchoice =  hchoice + 2;
+                }
                 moveBottom(main, list_perso[r-1], hchoice, wchoice );
                 hchoice =  hchoice + 1;
             }
             else if (pos > 0) {
+                if (pos > 2) {
+                    moveTop(main, list_perso[r-1], hchoice, wchoice);
+                    moveTop(main, list_perso[r-1], hchoice-1, wchoice);
+                    hchoice = hchoice - 2;
+                }
                 moveTop(main, list_perso[r-1], hchoice, wchoice);
                 hchoice = hchoice - 1;
             }
@@ -407,10 +417,20 @@ class AcademicArena extends Program {
         while (pos != 0) {
             pos = wchoice - midlew;
             if (pos < 0) {
+                if (pos < -2) {
+                    moveRight(main, list_perso[r-1], hchoice, wchoice );
+                    moveRight(main, list_perso[r-1], hchoice, wchoice+1);
+                    wchoice =  wchoice + 2;
+                }
                 moveRight(main, list_perso[r-1], hchoice, wchoice );
                 wchoice =  wchoice + 1;
             }
             else if (pos > 0) {
+                if (pos > 2) {
+                    moveLeft(main, list_perso[r-1], hchoice, wchoice);
+                    moveLeft(main, list_perso[r-1], hchoice, wchoice-1);
+                    wchoice = wchoice - 2;
+                }
                 moveLeft(main, list_perso[r-1], hchoice, wchoice);
                 wchoice = wchoice - 1;
             }
