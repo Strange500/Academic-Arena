@@ -355,7 +355,6 @@ class AcademicArena extends Program {
         Screen choose_ASCII = loadASCII(choosecharacter, ANSI_WHITE);
         applyPatch(choice, choose_ASCII, curH, choice.width/2 - choose_ASCII.width/2);
         curH = curH + choose_ASCII.height + 3;
-        drawHorizontalLine(choice, curH);
         curH = curH + 11;
 
         for (int i = 0; i < length(list_perso); i++) {
@@ -432,7 +431,7 @@ class AcademicArena extends Program {
 
 
         afficherLogo(sr);
-        mainMenue(sr);
+        // mainMenue(sr);
         chooseCharacter(sr);
         println(toString(sr));
 
