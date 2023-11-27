@@ -287,21 +287,18 @@ class AcademicArena extends Program {
 
     }
 
-    void mainMenue(Screen main) {
-        Screen choice = newScreen(25, 120);
-        Screen player = newScreen(25, 114);
+    // void mainMenue(Screen main) {
+    //     Screen choice = newScreen(25, 120);
+    //     Screen player = newScreen(25, 114);
+    //     Screen player_ASCII = loadASCII(PLAYER, ANSI_BLUE);
+    //     applyPatch(player, player_ASCII, 2, 20);
+    //     applyPatch(main, player, 25, 120, false);
+    //     drawVerticalLine(main, 120);
+    //     println(toString(main));
 
-        Screen player_ASCII = loadASCII(PLAYER, ANSI_BLUE);
-        applyPatch(player, player_ASCII, 2, 20);
+    // }
 
-        applyPatch(main, player, 25, 120, false);
 
-        drawVerticalLine(main, 120);
-        
-        println(toString(main));
-        
-
-    }
 
     Screen getNumber(int number, String color) {
         if (number < 1000 && number > 0) {
@@ -441,7 +438,17 @@ class AcademicArena extends Program {
 
     }
 
+    void genMob(Screen main ) {
+        
+    }
 
+    void genWawe() {
+
+    }
+
+    void genLevel(Screen main, int level) {
+
+    }
 
     void algorithm() {
         Screen sr = newScreen(53,204);
