@@ -10,6 +10,7 @@ class AcademicArena extends Program {
     String PLAYER = RESSOURCESDIR + "/" + "player.txt";
     String choosecharacter = RESSOURCESDIR + "/" + "choose.txt";
     String NUMBERDIR = RESSOURCESDIR + "/" + "numbers";
+    String MOBDIR = RESSOURCESDIR + "/" + "mobs";
 
     char[] list_EMPTY = new char[]{' ', ' ', ' ', ' ', ' ',' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '　', '⠀'};
 
@@ -438,8 +439,17 @@ class AcademicArena extends Program {
 
     }
 
-    void genMob(Screen main ) {
-        
+    String randomChoice(String[] list) {
+        int choice =(int) ( random() * length(list));
+        return list[choice];
+    }
+
+    void genMob(Screen main , int nombre) {
+        Screen ascii_mob ;
+        for (int i = 0; i < nombre; i++) {
+            ascii_mob = loadASCII(randomChoice(getAllFilesFromDirectory(MOBDIR)));
+            ////////////////            
+        }
     }
 
     void genWawe() {
