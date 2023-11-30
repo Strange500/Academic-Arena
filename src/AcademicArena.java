@@ -13,6 +13,58 @@ class AcademicArena extends Program {
     String MOBDIR = RESSOURCESDIR + "/" + "mobs";
 
     char[] list_EMPTY = new char[]{' ', ' ', ' ', ' ', ' ',' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '　', '⠀'};
+    Mob[] listMob ;
+
+    void loadMob() {
+        extensions.CSVFile f = loadCSV(RESSOURCESDIR + "/" + "mob.csv");
+        listMob = new Mob[rowCount(f)-1];
+        for (int i = 1; i < rowCount(f); i++) {
+            listMob[i-1] = newMob(StringToInt(getCell(f, i, 0)), StringToInt(getCell(f, i, 1)), getCell(f, i, 2), loadASCII(MOBDIR + "/" + getCell(f, i, 3), getANSI_COLOR(getCell(f, i, 4))), 0, 0);
+        }
+
+    }
+
+    void refresh(Screen main) {
+        drawHorizontalLine(main, 0, ANSI_TEXT_DEFAULT_COLOR);
+        drawHorizontalLine(main, main.height-1, ANSI_TEXT_DEFAULT_COLOR);
+        drawVerticalLine(main, 0, ANSI_TEXT_DEFAULT_COLOR);
+        drawVerticalLine(main, main.width-1, ANSI_TEXT_DEFAULT_COLOR);
+        println(toString(main));
+    }
+
+    String getANSI_COLOR(String color) {
+        String result = "";
+        switch (color) {
+            case "black":
+                result = ANSI_BLACK;
+                break;
+            case "red":
+                result = ANSI_RED;
+                break;
+            case "green":
+                result = ANSI_GREEN;
+                break;
+            case "yellow":
+                result = ANSI_YELLOW;
+                break;
+            case "blue":
+                result = ANSI_BLUE;
+                break;
+            case "purple":
+                result = ANSI_PURPLE;
+                break;
+            case "cyan":
+                result = ANSI_CYAN;
+                break;
+            case "white":
+                result = ANSI_WHITE;
+                break;
+            default:
+                result = ANSI_TEXT_DEFAULT_COLOR;
+                break;
+        }
+        return result;
+    }
 
     boolean isEmpty(char c) {
         int cpt = 0;
@@ -29,6 +81,20 @@ class AcademicArena extends Program {
         p.c = color + c;
         return p;
     }
+
+    int StringToInt(String text) {
+        int result = 0;
+        int cpt = 0;
+        while (cpt < length(text)) {
+            result = result * 10 + charToInt(charAt(text, cpt));
+            cpt = cpt + 1;
+        }
+        return result;
+    }
+
+    // int charToInt(char c) {
+    //     return c - '0';
+    // }
 
     Pixel newPixelEmpty() {
         Pixel p = new Pixel();
@@ -53,6 +119,10 @@ class AcademicArena extends Program {
         return pixel.c;
     }
 
+    String toString(Mob m) {
+        return m.hp + " " + m.atk + " " + m.faiblesse + " " + m.visuel + " " + m.posx + " " + m.posy;
+    }
+
     boolean equals(Pixel p1, Pixel p2) {
         return charAt(p1.c, length(p1.c) - 1) ==  charAt(p2.c, length(p2.c) - 1);
     }
@@ -67,6 +137,24 @@ class AcademicArena extends Program {
             result = result + '\n' + ANSI_TEXT_DEFAULT_COLOR;
         }
         return result + ANSI_TEXT_DEFAULT_COLOR;
+    }
+
+    Mob newMob(int hp, int atk, String faiblesse, Screen visuel, int posx, int posy) {
+        Mob m = new Mob();
+        m.hp = hp;
+        m.initialHp = hp;
+        m.dead = false;
+        m.atk = atk;
+        m.faiblesse = faiblesse;
+        m.visuel = visuel;
+        m.posx = posx;
+        m.posy = posy;
+        return m;
+    }
+
+    Mob copyMob(Mob m) {
+        Mob result = newMob(m.hp, m.atk, m.faiblesse, m.visuel, m.posx, m.posy);
+        return result;
     }
 
     String fileAsString(String filePath) {
@@ -193,15 +281,14 @@ class AcademicArena extends Program {
     }
 
     void removePatch(Screen main, Screen patch, int h, int w, boolean transistion) {
-        Screen n = newScreen(patch.height, patch.width);
-        for (int i = 0; i < n.height+1; i++) {
-            removePatch(n, n, i-1, 0);
-            drawHorizontalLine(n, i);
-            applyPatch(patch, n, 0, 0);
+        Screen n = newScreen(1, patch.width);
+        drawHorizontalLine(n, 0);
+        for (int i = 0; i < patch.height+1; i++) {
+            removePatch(patch, n, i-1, 0);
+            applyPatch(patch, n, i, 0);
             applyPatch(main, patch, h, w);
-            println(toString(main));
+            refresh(main);
         }
-        applyPatch(main, n, h, w);
     }
 
     
@@ -226,12 +313,44 @@ class AcademicArena extends Program {
         applyPatch(main, patch, curH + 1, curW);     
     }
 
+
+    void moveTo(Screen main, Screen patch, int curH, int curW, int targetH, int targetW) {
+        if (targetH > curH) {
+            while (curH != targetH) {
+                moveBottom(main, patch, curH, curW);
+                curH = curH + 1;
+                refresh(main);
+            }
+        }
+        else if (targetH < curH) {
+            while (curH != targetH) {
+                moveTop(main, patch, curH, curW);
+                curH = curH - 1;
+                refresh(main);
+            }
+        }
+        if (targetW > curW) {
+            while (curW != targetW) {
+                moveRight(main, patch, curH, curW);
+                curW = curW + 1;
+                refresh(main);
+            }
+        }
+        else if (targetW < curW) {
+            while (curW != targetW) {
+                moveLeft(main, patch, curH, curW);
+                curW = curW - 1;
+                refresh(main);
+            }
+        }
+    }
+
     
 
     void drawVerticalLine(Screen main, int w, String color) {
         Screen line = newScreen(main.height, 1);
         for (int i = 0; i < line.height; i++) {
-            line.screen[i][1] = newPixel('▐', color);
+            line.screen[i][0] = newPixel('▐', color);
         }
         applyPatch(main, line, 0, w);
     }
@@ -273,7 +392,7 @@ class AcademicArena extends Program {
             posX_B = posX_B - 1;
             moveRight(main, partA, posy_A, i);
             moveLeft(main, partB, posy_B, posX_B);
-            println(toString(main));
+            refresh(main);
         } 
 
         print("             Press enter to start                ");
@@ -282,7 +401,7 @@ class AcademicArena extends Program {
         for (int i = 0; i < 50; i++) {
             moveTop(main, partA, posy_A - i, posX_A) ;
             moveBottom(main, partB, posy_B + i, posX_B);
-            println(toString(main));
+            refresh(main);
         }
 
 
@@ -295,7 +414,7 @@ class AcademicArena extends Program {
     //     applyPatch(player, player_ASCII, 2, 20);
     //     applyPatch(main, player, 25, 120, false);
     //     drawVerticalLine(main, 120);
-    //     println(toString(main));
+    //     refresh(main);
 
     // }
 
@@ -364,7 +483,7 @@ class AcademicArena extends Program {
         applyPatch(main, prompt, choice.height, 0, false);
         
         do {
-            println(toString(main));
+            refresh(main);
 
             print("Choose your character : ");
 
@@ -434,7 +553,7 @@ class AcademicArena extends Program {
             }
             print(toString(main));
         }
-        println(toString(main));
+        refresh(main);
         return list_perso[r-1];
 
     }
@@ -444,34 +563,125 @@ class AcademicArena extends Program {
         return list[choice];
     }
 
-    void genMob(Screen main , int nombre) {
-        Screen ascii_mob ;
-        for (int i = 0; i < nombre; i++) {
-            ascii_mob = loadASCII(randomChoice(getAllFilesFromDirectory(MOBDIR)));
-            ////////////////            
+    Mob randomChoice(Mob[] list) {
+        int choice =(int) ( random() * length(list));       
+        return list[choice];
+    }
+
+    Mob[] genMob(Screen main , int nombre) {
+        Mob[] lsMob = new Mob[nombre];
+        Mob mob ;
+        int posy_last = 0;
+        int cpt = 0;
+        while (cpt < nombre && posy_last < main.height) {
+            mob = copyMob(randomChoice(listMob));
+            mob.posx = main.width - mob.visuel.width - 30;
+            print(posy_last + main.height/nombre - mob.visuel.height/2);
+            mob.posy = posy_last + main.height/(nombre * 2) - mob.visuel.height/2;
+            applyPatch(main, mob.visuel, mob.posy, main.height+mob.posx);
+            moveTo(main, mob.visuel, mob.posy, main.height+mob.posx, mob.posy, mob.posx);
+            lsMob[cpt] = mob;
+            cpt = cpt + 1;
+            posy_last = posy_last + main.height/nombre;
+            refresh(main);
+        }
+        return lsMob;
+    }
+
+    boolean allDead(Mob[] list) {
+        boolean result = true;
+        int cpt = 0;
+        while (cpt < length(list) && result) {
+            result = list[cpt].dead;
+            cpt = cpt + 1;
+        }
+        return result;
+    }
+
+    int chooseNumber(int min, int max) {
+        int result = 0;
+        do {
+            result = readInt();
+        } while (result < min || result > max);
+        return result;
+    }
+
+    void updateMobHpBar(Screen main, Mob mob) {       
+        Screen hpBar = newScreen(1, mob.hp*20/mob.initialHp);
+        removePatch(main, newScreen(1, 20), mob.posy + mob.visuel.height, mob.posx);
+        if (mob.hp > (mob.initialHp/4)*3) {
+            drawHorizontalLine(hpBar, 0, ANSI_GREEN);
+        }
+        else if (mob.hp > (mob.initialHp/4)) {
+            drawHorizontalLine(hpBar, 0, ANSI_YELLOW);
+        }
+        else {
+            drawHorizontalLine(hpBar, 0, ANSI_RED);
+        }
+        applyPatch(main, hpBar, mob.posy + mob.visuel.height, mob.posx);
+    }
+
+    void updateMobBattle(Screen main, Mob[] lsMob) {
+        Mob mob;
+        for (int i = 0; i < length(lsMob); i++) {
+            mob = lsMob[i];
+            if (mob.hp <= 0 && !mob.dead) {
+                removePatch(main, newScreen(1, 20), mob.posy + mob.visuel.height, mob.posx);
+                removePatch(main, mob.visuel, mob.posy, mob.posx, true);
+                mob.dead = true;
+                
+            }
+            else {
+                updateMobHpBar(main, mob);
+            }
+            
         }
     }
 
-    void genWawe() {
+    boolean genWawe(Screen main, int waweNumber, int difficulty) {
+        Mob[] listToDefeat = genMob(main, waweNumber);
+        boolean gameOver = false;
+        int cpt = 0;
+        while (!allDead(listToDefeat) && !gameOver ) {
+            updateMobBattle(main, listToDefeat);
+            refresh(main);
+            println("Qui voulez vous attaquer ? ");
+            int choice = chooseNumber(1, length(listToDefeat)) - 1;
+            refresh(main);
+            println("Vous attaquez le mob " + (choice + 1));
+            listToDefeat[choice].hp = listToDefeat[choice].hp - 2;
+            updateMobBattle(main, listToDefeat);
+            refresh(main);
+            cpt = cpt + 1;
+        }
+        return gameOver;
+
 
     }
 
-    void genLevel(Screen main, int level) {
+    // boolean genLevel(Screen main, int level) {
 
-    }
+    // }
 
     void algorithm() {
+
+       
         Screen sr = newScreen(53,204);
-        // applyPatch(sr, loadASCII(PLAYER, ANSI_BLUE), 0, 0);
-        // println(toString(sr));
+        loadMob();
+
+        // for (int i = 0; i < length(listMob); i++) {
+        //     refresh(listMob[i]));
+        // }
+
+        // // applyPatch(sr, loadASCII(PLAYER, ANSI_BLUE), 0, 0);
+        // // refresh(sr));
 
 
 
         afficherLogo(sr);
-        // mainMenue(sr);
         chooseCharacter(sr);
-        println(toString(sr));
-
+        genWawe(sr, 2, 1);
+        refresh(sr);
     }
 
 }
