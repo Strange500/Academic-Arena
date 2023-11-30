@@ -626,9 +626,11 @@ class AcademicArena extends Program {
         for (int i = 0; i < length(lsMob); i++) {
             mob = lsMob[i];
             if (mob.hp <= 0 && !mob.dead) {
-                removePatch(main, newScreen(1, 20), mob.posy + mob.visuel.height, mob.posx);
                 removePatch(main, mob.visuel, mob.posy, mob.posx, true);
+                removePatch(main, newScreen(1, 20), mob.posy + mob.visuel.height, mob.posx);
+
                 mob.dead = true;
+                mob.hp = 0;
                 
             }
             else {
@@ -647,12 +649,15 @@ class AcademicArena extends Program {
             refresh(main);
             println("Qui voulez vous attaquer ? ");
             int choice = chooseNumber(1, length(listToDefeat)) - 1;
-            refresh(main);
-            println("Vous attaquez le mob " + (choice + 1));
-            listToDefeat[choice].hp = listToDefeat[choice].hp - 2;
-            updateMobBattle(main, listToDefeat);
-            refresh(main);
-            cpt = cpt + 1;
+            if (!listToDefeat[choice].dead) {
+                refresh(main);
+                println("Vous attaquez le mob " + (choice + 1));
+                listToDefeat[choice].hp = listToDefeat[choice].hp - 2;
+                updateMobBattle(main, listToDefeat);
+                refresh(main);
+                cpt = cpt + 1;
+            }
+            
         }
         return gameOver;
 
