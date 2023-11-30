@@ -3,7 +3,7 @@ class Mob {
     int initialHp;
     boolean dead;
     int atk;
-    String faiblesse;
+    Operation faiblesse;
     Screen visuel;
     int posx;
     int posy;

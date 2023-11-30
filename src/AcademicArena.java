@@ -19,7 +19,7 @@ class AcademicArena extends Program {
         extensions.CSVFile f = loadCSV(RESSOURCESDIR + "/" + "mob.csv");
         listMob = new Mob[rowCount(f)-1];
         for (int i = 1; i < rowCount(f); i++) {
-            listMob[i-1] = newMob(StringToInt(getCell(f, i, 0)), StringToInt(getCell(f, i, 1)), getCell(f, i, 2), loadASCII(MOBDIR + "/" + getCell(f, i, 3), getANSI_COLOR(getCell(f, i, 4))), 0, 0);
+            listMob[i-1] = newMob(StringToInt(getCell(f, i, 0)), StringToInt(getCell(f, i, 1)), getOperation(getCell(f, i, 2)), loadASCII(MOBDIR + "/" + getCell(f, i, 3), getANSI_COLOR(getCell(f, i, 4))), 0, 0);
         }
 
     }
@@ -30,6 +30,25 @@ class AcademicArena extends Program {
         drawVerticalLine(main, 0, ANSI_TEXT_DEFAULT_COLOR);
         drawVerticalLine(main, main.width-1, ANSI_TEXT_DEFAULT_COLOR);
         println(toString(main));
+    }
+
+    Operation getOperation(String operation) {
+        if (equals(operation, "addition")) {
+            return Operation.ADDITION;
+        }
+        else if (equals(operation, "multiplication")) {
+            return Operation.MULTIPLICATION;
+        }
+        else if (equals(operation, "division")) {
+            return Operation.DIVISION;
+        }
+        else if (equals(operation, "soustraction")) {
+            return Operation.SOUSTRACTION;
+        }
+        else {
+            return Operation.ADDITION;
+        }
+        
     }
 
     String getANSI_COLOR(String color) {
@@ -139,7 +158,7 @@ class AcademicArena extends Program {
         return result + ANSI_TEXT_DEFAULT_COLOR;
     }
 
-    Mob newMob(int hp, int atk, String faiblesse, Screen visuel, int posx, int posy) {
+    Mob newMob(int hp, int atk, Operation faiblesse, Screen visuel, int posx, int posy) {
         Mob m = new Mob();
         m.hp = hp;
         m.initialHp = hp;
@@ -564,11 +583,14 @@ class AcademicArena extends Program {
     }
 
     Mob randomChoice(Mob[] list) {
-        int choice =(int) ( random() * length(list));       
+        int choice =(int) ( random() * length(list));  
+        println(choice);  
+        readString();   
         return list[choice];
     }
 
     Mob[] genMob(Screen main , int nombre) {
+        loadMob();
         Mob[] lsMob = new Mob[nombre];
         Mob mob ;
         int posy_last = 0;
@@ -664,29 +686,30 @@ class AcademicArena extends Program {
 
     }
 
-    // boolean genLevel(Screen main, int level) {
-
-    // }
+    boolean genLevel(Screen main, int level) {
+        int cpt = 0;
+        boolean gameOver = false;
+        while (cpt < 3 && !gameOver) {
+            gameOver = genWawe(main, cpt+1, 1);
+            cpt = cpt + 1;
+        }
+        return gameOver;
+    }
 
     void algorithm() {
-
-       
-        Screen sr = newScreen(53,204);
         loadMob();
+        Screen main = newScreen(51,204);
+        boolean gameOver = false;
+        Screen charcater;
+        int level = 1;
 
-        // for (int i = 0; i < length(listMob); i++) {
-        //     refresh(listMob[i]));
-        // }
-
-        // // applyPatch(sr, loadASCII(PLAYER, ANSI_BLUE), 0, 0);
-        // // refresh(sr));
-
-
-
-        afficherLogo(sr);
-        chooseCharacter(sr);
-        genWawe(sr, 2, 1);
-        refresh(sr);
+        // afficherLogo(main);
+        // charcater = chooseCharacter(main);
+        while (!gameOver) {
+            genLevel(main, level);
+        }
+        genWawe(main, 2, 1);
+        refresh(main);
     }
 
 }
