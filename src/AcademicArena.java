@@ -584,8 +584,6 @@ class AcademicArena extends Program {
 
     Mob randomChoice(Mob[] list) {
         int choice =(int) ( random() * length(list));  
-        println(choice);  
-        readString();   
         return list[choice];
     }
 
@@ -667,6 +665,8 @@ class AcademicArena extends Program {
         boolean gameOver = false;
         int cpt = 0;
         while (!allDead(listToDefeat) && !gameOver ) {
+            removePatch(main, newScreen(7, 8), 2, 10);
+            applyPatch(main, getNumber(waweNumber, ANSI_TEXT_DEFAULT_COLOR), 2, 10);
             updateMobBattle(main, listToDefeat);
             refresh(main);
             println("Qui voulez vous attaquer ? ");
@@ -703,8 +703,8 @@ class AcademicArena extends Program {
         Screen charcater;
         int level = 1;
 
-        // afficherLogo(main);
-        // charcater = chooseCharacter(main);
+        afficherLogo(main);
+        charcater = chooseCharacter(main);
         while (!gameOver) {
             genLevel(main, level);
         }
