@@ -786,7 +786,7 @@ class AcademicArena extends Program {
         return gameOver;
     }
 
-    void _algorithm() {
+    void algorithm() {
         loadMob();
         Screen main = newScreen(51,204);
         boolean gameOver = false;
@@ -802,7 +802,7 @@ class AcademicArena extends Program {
         refresh(main);
     }
 
-    void algorithm() {
+    void _algorithm() {
         refresh(genText("prout", ""));
     }
 
