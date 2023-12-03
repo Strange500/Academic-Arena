@@ -534,10 +534,9 @@ class AcademicArena extends Program {
 
 
         Screen choose_ASCII = loadASCII(choosecharacter, ANSI_WHITE);
-        applyPatch(choice, choose_ASCII, curH, choice.width/2 - choose_ASCII.width/2);
+        applyPatch(choice, genText("Choisi ton personnage", ""), curH, choice.width/2 - choose_ASCII.width/2);
         curH = curH + choose_ASCII.height + 3;
         curH = curH + 11;
-
         for (int i = 0; i < length(list_perso); i++) {
             applyPatch(choice, list_perso[i], curH, 20 + ((witdh_last) + 20*i));
             applyPatch(prompt, getNumber(i+1, ANSI_WHITE), 0, 20 + ((witdh_last) + 20*i));
@@ -786,6 +785,24 @@ class AcademicArena extends Program {
         return gameOver;
     }
 
+    boolean challenge(int min, int max) {
+        int nb1;
+        int nb2;
+        if (min < 0) {
+            nb1 = random(-min, max+(-min)) + min;
+            nb2 = random(-min, max+(-min)) + min;
+        }
+        else {
+            nb1 = random(min, max);
+            nb2 = random(min, max);
+        }
+
+        int response ;
+        print("Reponse : ");
+        response = readInt();
+        return response == nb1 + nb2;
+    }   
+
     void algorithm() {
         loadMob();
         Screen main = newScreen(51,204);
@@ -801,6 +818,7 @@ class AcademicArena extends Program {
         genWawe(main, 2, 1);
         refresh(main);
     }
+
 
     void _algorithm() {
         refresh(genText("prout", ""));
