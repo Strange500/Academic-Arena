@@ -60,6 +60,24 @@ class AcademicArena extends Program {
         
     }
 
+    // boolean challenge(int min, int max) {
+    //     int nb1;
+    //     int nb2;
+    //     if (min < 0) {
+    //         nb1 = random(-min, max+(-min)) + min;
+    //         nb2 = random(-min, max+(-min)) + min;
+    //     }
+    //     else {
+    //         nb1 = random(min, max);
+    //         nb2 = random(min, max);
+    //     }
+
+    //     int response ;
+    //     print("Reponse : ");
+    //     response = readInt();
+    //     return response == nb1 + nb2;
+    // }    
+
     String getANSI_COLOR(String color) {
         String result = "";
         switch (color) {
@@ -785,23 +803,23 @@ class AcademicArena extends Program {
         return gameOver;
     }
 
-    boolean challenge(int min, int max) {
-        int nb1;
-        int nb2;
-        if (min < 0) {
-            nb1 = random(-min, max+(-min)) + min;
-            nb2 = random(-min, max+(-min)) + min;
-        }
-        else {
-            nb1 = random(min, max);
-            nb2 = random(min, max);
-        }
+    // boolean challenge(int min, int max) {
+    //     int nb1;
+    //     int nb2;
+    //     if (min < 0) {
+    //         nb1 = random(-min, max+(-min)) + min;
+    //         nb2 = random(-min, max+(-min)) + min;
+    //     }
+    //     else {
+    //         nb1 = random(min, max);
+    //         nb2 = random(min, max);
+    //     }
 
-        int response ;
-        print("Reponse : ");
-        response = readInt();
-        return response == nb1 + nb2;
-    }   
+    //     int response ;
+    //     print("Reponse : ");
+    //     response = readInt();
+    //     return response == nb1 + nb2;
+    // }   
 
     void algorithm() {
         loadMob();
@@ -815,7 +833,7 @@ class AcademicArena extends Program {
         while (!gameOver) {
             genLevel(main, level);
         }
-        genWawe(main, 2, 1);
+        //genWawe(main, 2, 1);
         refresh(main);
     }
 
