@@ -12,6 +12,7 @@ class AcademicArena extends Program {
     String choosecharacter = RESSOURCESDIR + "/" + "choose.txt";
     String NUMBERDIR = RESSOURCESDIR + "/" + "numbers";
     String MOBDIR = RESSOURCESDIR + "/" + "mobs";
+    String PLAYERFILE = RESSOURCESDIR + "/" + "players.csv";
 
     char[] list_EMPTY = new char[]{' ', ' ', ' ', ' ', ' ',' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '　', '⠀'};
     Mob[] listMob ;
@@ -33,6 +34,13 @@ class AcademicArena extends Program {
         println(toString(main));
     }
 
+    String getletterPath(char c) {
+        if (c == ' ') {
+            return RESSOURCESDIR + "/letters/" + "space" + ".txt";
+        }
+        return RESSOURCESDIR + "/letters/" + c + ".txt"; 
+    }
+
     Operation getOperation(String operation) {
         if (equals(operation, "addition")) {
             return Operation.ADDITION;
@@ -51,6 +59,24 @@ class AcademicArena extends Program {
         }
         
     }
+
+    // boolean challenge(int min, int max) {
+    //     int nb1;
+    //     int nb2;
+    //     if (min < 0) {
+    //         nb1 = random(-min, max+(-min)) + min;
+    //         nb2 = random(-min, max+(-min)) + min;
+    //     }
+    //     else {
+    //         nb1 = random(min, max);
+    //         nb2 = random(min, max);
+    //     }
+
+    //     int response ;
+    //     print("Reponse : ");
+    //     response = readInt();
+    //     return response == nb1 + nb2;
+    // }    
 
     String getANSI_COLOR(String color) {
         String result = "";
@@ -147,6 +173,10 @@ class AcademicArena extends Program {
         return charAt(p1.c, length(p1.c) - 1) ==  charAt(p2.c, length(p2.c) - 1);
     }
 
+    void testEqualsPixel() {
+
+    }
+
     String toString(Screen screen) {
         String result = "";
         for (int i = 0; i < length(screen.screen, 1); i++) {
@@ -157,6 +187,13 @@ class AcademicArena extends Program {
             result = result + '\n' + ANSI_TEXT_DEFAULT_COLOR;
         }
         return result + ANSI_TEXT_DEFAULT_COLOR;
+    }
+
+    void testToStringScreen() {
+        Screen sr = newScreen(2, 2);
+        sr.screen[0][0] = newPixel('H', "");
+        sr.screen[1][1] = newPixel('Y', "");
+        assertEquals(toString(sr.screen[0][0]) + toString(sr.screen[0][1]) + "\n" + ANSI_TEXT_DEFAULT_COLOR + toString(sr.screen[1][0]) + toString(sr.screen[1][1]) + "\n" + ANSI_TEXT_DEFAULT_COLOR + ANSI_TEXT_DEFAULT_COLOR  , toString(sr));
     }
 
     Mob newMob(int hp, int atk, Operation faiblesse, Screen visuel, int posx, int posy) {
@@ -170,6 +207,22 @@ class AcademicArena extends Program {
         m.posx = posx;
         m.posy = posy;
         return m;
+    }
+
+    void testnewMob() {
+        int hp = 10;
+        int atk = 12;
+        Operation faiblesse = Operation.ADDITION;
+        Screen visuel = newScreen(10, 10);
+        int posx = 0;
+        int posy = 10;
+        Mob m = newMob(hp, atk, faiblesse, visuel, posx, posy)  ;
+        assertEquals(hp, m.hp);
+        assertEquals(atk, m.atk);
+        assertEquals(visuel, m.visuel);
+        assertEquals(posx, m.posx);
+        assertEquals(faiblesse, m.faiblesse);
+        assertEquals(posy, m.posy);
     }
 
     Mob copyMob(Mob m) {
@@ -334,35 +387,44 @@ class AcademicArena extends Program {
     }
 
 
-    void moveTo(Screen main, Screen patch, int curH, int curW, int targetH, int targetW) {
+    void moveTo(Screen main, Screen patch, int curH, int curW, int targetH, int targetW, int speed) {
         if (targetH > curH) {
             while (curH != targetH) {
                 moveBottom(main, patch, curH, curW);
                 curH = curH + 1;
-                refresh(main);
+                if (curH % speed == 0) {
+                    refresh(main);
+                }
             }
         }
         else if (targetH < curH) {
             while (curH != targetH) {
                 moveTop(main, patch, curH, curW);
                 curH = curH - 1;
-                refresh(main);
+                if (curH % speed == 0) {
+                    refresh(main);
+                }
             }
         }
         if (targetW > curW) {
             while (curW != targetW) {
                 moveRight(main, patch, curH, curW);
                 curW = curW + 1;
-                refresh(main);
+                if (curW % speed == 0) {
+                    refresh(main);
+                }
             }
         }
         else if (targetW < curW) {
             while (curW != targetW) {
                 moveLeft(main, patch, curH, curW);
                 curW = curW - 1;
-                refresh(main);
+                if (curW % speed == 0) {
+                    refresh(main);
+                }
             }
         }
+        refresh(main);
     }
 
     
@@ -490,10 +552,9 @@ class AcademicArena extends Program {
 
 
         Screen choose_ASCII = loadASCII(choosecharacter, ANSI_WHITE);
-        applyPatch(choice, choose_ASCII, curH, choice.width/2 - choose_ASCII.width/2);
+        applyPatch(choice, genText("Choisi ton personnage", ""), curH, choice.width/2 - choose_ASCII.width/2);
         curH = curH + choose_ASCII.height + 3;
         curH = curH + 11;
-
         for (int i = 0; i < length(list_perso); i++) {
             applyPatch(choice, list_perso[i], curH, 20 + ((witdh_last) + 20*i));
             applyPatch(prompt, getNumber(i+1, ANSI_WHITE), 0, 20 + ((witdh_last) + 20*i));
@@ -600,7 +661,7 @@ class AcademicArena extends Program {
             print(posy_last + main.height/nombre - mob.visuel.height/2);
             mob.posy = posy_last + main.height/(nombre * 2) - mob.visuel.height/2;
             applyPatch(main, mob.visuel, mob.posy, main.height+mob.posx);
-            moveTo(main, mob.visuel, mob.posy, main.height+mob.posx, mob.posy, mob.posx);
+            moveTo(main, mob.visuel, mob.posy, main.height+mob.posx, mob.posy, mob.posx, 5);
             lsMob[cpt] = mob;
             cpt = cpt + 1;
             posy_last = posy_last + main.height/nombre;
@@ -687,6 +748,51 @@ class AcademicArena extends Program {
 
     }
 
+    int sumWidth(Screen[] screens) {
+        int result = 0;
+        for (int i = 0; i < length(screens); i++) {
+            if (screens[i] != null ) {
+                result = result + screens[i].width;
+            }
+        }
+        return result;
+    }
+
+    Screen genText(String text, String color) {
+        if (equals(color, "")) {
+            color = ANSI_TEXT_DEFAULT_COLOR;
+        }
+        int maxheight = 0;
+        char current;
+        int lastWith = 0;
+        Screen[] listASCII =  new Screen[length(text)];
+        for (int i = 0; i < length(listASCII); i++) {
+            current = charAt(text, i);
+            if ((current >= 'a' && current <= 'z') || (current >= 'A' && current <= 'Z') || current == ' '){
+                if (current == ' ') {
+                    listASCII[i] = loadASCII(getletterPath(current), color);
+                }
+                else {
+                    current = charAt(toUpperCase(current + ""), 0);
+                    listASCII[i] = loadASCII(getletterPath(current), color);
+                }
+                
+                if (listASCII[i].height > maxheight) {
+                    maxheight = listASCII[i].height;
+                }
+            }
+        }
+        Screen generatedtext = newScreen(maxheight, sumWidth(listASCII));
+        for (int i = 0; i < length(listASCII); i++) {
+            if (listASCII[i] != null && listASCII[i].screen != null) {
+                applyPatch(generatedtext, listASCII[i], 0, lastWith);
+                lastWith = lastWith + listASCII[i].width;
+            }
+        }
+         return generatedtext;
+
+    }
+
     boolean genLevel(Screen main, int level) {
         int cpt = 0;
         boolean gameOver = false;
@@ -697,20 +803,43 @@ class AcademicArena extends Program {
         return gameOver;
     }
 
+    // boolean challenge(int min, int max) {
+    //     int nb1;
+    //     int nb2;
+    //     if (min < 0) {
+    //         nb1 = random(-min, max+(-min)) + min;
+    //         nb2 = random(-min, max+(-min)) + min;
+    //     }
+    //     else {
+    //         nb1 = random(min, max);
+    //         nb2 = random(min, max);
+    //     }
+
+    //     int response ;
+    //     print("Reponse : ");
+    //     response = readInt();
+    //     return response == nb1 + nb2;
+    // }   
+
     void algorithm() {
         loadMob();
         Screen main = newScreen(51,204);
         boolean gameOver = false;
-        Screen charcater;
+        Player player;
         int level = 1;
 
         afficherLogo(main);
-        charcater = chooseCharacter(main);
+        chooseCharacter(main);
         while (!gameOver) {
             genLevel(main, level);
         }
-        genWawe(main, 2, 1);
+        //genWawe(main, 2, 1);
         refresh(main);
+    }
+
+
+    void _algorithm() {
+        refresh(genText("prout", ""));
     }
 
 }

@@ -1,4 +1,3 @@
 hp,atk,faiblesse,visuel,color
 10,10,addition,demon.txt,red
-10,10,soustraction,demon.txt,green
-10,10,soustraction,demon.txt,yellow
+10,10,soustraction,chat.txt,white
