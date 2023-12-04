@@ -432,7 +432,7 @@ class AcademicArena extends Program {
 
     void drawVerticalLine(Screen main, int w, String color) {
         Screen line = newScreen(main.height, 1);
-        for (int i = 0; i < line.height; i++) {
+        for (int i = 1; i < line.height; i++) {
             line.screen[i][0] = newPixel('▐', color);
         }
         applyPatch(main, line, 0, w);
@@ -440,7 +440,7 @@ class AcademicArena extends Program {
 
     void drawVerticalLine(Screen main, int w) {
         Screen line = newScreen(main.height, 1);
-        for (int i = 0; i < line.height; i++) {
+        for (int i = 1; i < line.height; i++) {
             line.screen[i][0] = newPixel('▐', "");
         }
         applyPatch(main, line, 0, w);
@@ -824,7 +824,7 @@ class AcademicArena extends Program {
 
     void algorithm() {
         loadMob();
-        Screen main = newScreen(51,204);
+        Screen main = newScreen(51,250);
         boolean gameOver = false;
         Player player;
         int level = 1;
