@@ -9,6 +9,7 @@ class AcademicArena extends Program {
     String LOGOPARTB = RESSOURCESDIR + "/" + "arena.txt";
     String PLAYER = RESSOURCESDIR + "/" + "player.txt";
     String PLAYER2 = RESSOURCESDIR + "/" + "playertest.txt";
+    String PLAYER3 = RESSOURCESDIR + "/" + "player3.txt";
     String choosecharacter = RESSOURCESDIR + "/" + "choose.txt";
     String NUMBERDIR = RESSOURCESDIR + "/" + "numbers";
     String MOBDIR = RESSOURCESDIR + "/" + "mobs";
@@ -547,7 +548,7 @@ class AcademicArena extends Program {
         Screen[] list_perso = new Screen[4];
         list_perso[0] = loadASCII(PLAYER, ANSI_RED);
         list_perso[1] = loadASCII(PLAYER2, ANSI_GREEN);
-        list_perso[2] = loadASCII(PLAYER, ANSI_YELLOW);
+        list_perso[2] = loadASCII(PLAYER3, ANSI_YELLOW);
         list_perso[3] = loadASCII(PLAYER, ANSI_BLUE);
 
 
