@@ -647,7 +647,7 @@ class AcademicArena extends Program {
     }
 
     Mob randomChoice(Mob[] list) {
-        int choice =(int) ( random() * length(list));  
+        int choice =(int) ( random() * length(list));
         return list[choice];
     }
 
