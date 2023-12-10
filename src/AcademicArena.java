@@ -468,10 +468,10 @@ class AcademicArena extends Program {
         Screen partB = loadASCII(LOGOPARTB, ANSI_YELLOW);
         int posX_A = -150;
         int posy_A = 10;
-        int posX_B = main.width - (posX_A +  125);
+        int posX_B = main.width - (posX_A +  135);
         int posy_B = 25;
 
-        for (int i = posX_A; i < 20; i++) {
+        for (int i = posX_A; i < 40; i++) {
             posX_A = posX_A + 1;
             posX_B = posX_B - 1;
             moveRight(main, partA, posy_A, i);
@@ -692,7 +692,9 @@ class AcademicArena extends Program {
 
     void updateMobHpBar(Screen main, Mob mob) {       
         Screen hpBar = newScreen(1, mob.hp*20/mob.initialHp);
+
         removePatch(main, newScreen(1, 20), mob.posy + mob.visuel.height, mob.posx);
+        
         if (mob.hp > (mob.initialHp/4)*3) {
             drawHorizontalLine(hpBar, 0, ANSI_GREEN);
         }
