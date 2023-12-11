@@ -1,8 +1,8 @@
-<Mettre ici le nom de votre jeu>
+Academic Arena
 ===========
 
-Développé par <prénom1 nom1> <prénom2 nom2>
-Contacts : <mail1> , <mail2>
+Développé par Florian Pollet Roget Benjamin
+Contacts : florian.pollet.etu@univ-lille.fr , benjamin.roget.etu@univ-lille.fr
 
 # Présentation de <le nom de votre jeu>
 
