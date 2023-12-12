@@ -19,6 +19,9 @@ class AcademicArena extends Program {
     char[] list_EMPTY = new char[]{' ', ' ', ' ', ' ', ' ',' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '　', '⠀'};
     Mob[] listMob ;
 
+
+    Screen main = newScreen(51,250);
+
     void loadMob() {
         extensions.CSVFile f = loadCSV(RESSOURCESDIR + "/" + "mob.csv");
         listMob = new Mob[rowCount(f)-1];
@@ -28,7 +31,7 @@ class AcademicArena extends Program {
 
     }
 
-    void refresh(Screen main) {
+    void refresh() {
         drawHorizontalLine(main, 0, ANSI_TEXT_DEFAULT_COLOR);
         drawHorizontalLine(main, main.height-1, ANSI_TEXT_DEFAULT_COLOR);
         drawVerticalLine(main, 0, ANSI_TEXT_DEFAULT_COLOR);
@@ -296,16 +299,16 @@ class AcademicArena extends Program {
     }
 
 
-    void applyPatch(Screen main, Screen patch, int h, int w) {
-        if ((w < main.width) && h < main.height) {
+    void applyPatch(Screen mainScreen, Screen patch, int h, int w) {
+        if ((w < mainScreen.width) && h < mainScreen.height) {
             int cptH_main = h;
             int cptH_patch = 0;
             int cptW_main = w;
             int cptW_patch = 0;
-            while (cptH_patch < length(patch.screen, 1) && cptH_main < length(main.screen, 1)) {
-                while (cptW_patch < length(patch.screen, 2) && cptW_main < length(main.screen, 2)) {
+            while (cptH_patch < length(patch.screen, 1) && cptH_main < length(mainScreen.screen, 1)) {
+                while (cptW_patch < length(patch.screen, 2) && cptW_main < length(mainScreen.screen, 2)) {
                     if (cptH_main >= 0 && cptW_main >= 0) {
-                        main.screen[cptH_main][cptW_main] = patch.screen[cptH_patch][cptW_patch];
+                        mainScreen.screen[cptH_main][cptW_main] = patch.screen[cptH_patch][cptW_patch];
                     }
                     cptW_main = cptW_main + 1;
                     cptW_patch = cptW_patch + 1;
@@ -320,17 +323,17 @@ class AcademicArena extends Program {
 
     }
 
-    void applyPatch(Screen main, Screen patch, int h, int w, boolean eraseNonEmpty) {
-        if ((w < main.width) && h < main.height) {
+    void applyPatch(Screen mainScreen, Screen patch, int h, int w, boolean eraseNonEmpty) {
+        if ((w < mainScreen.width) && h < mainScreen.height) {
             int cptH_main = h;
             int cptH_patch = 0;
             int cptW_main = w;
             int cptW_patch = 0;
-            while (cptH_patch < length(patch.screen, 1) && cptH_main < length(main.screen, 1)) {
-                while (cptW_patch < length(patch.screen, 2) && cptW_main < length(main.screen, 2)) {
-                    if (!eraseNonEmpty && !equals(patch.screen[cptH_patch][cptW_patch], EMPTYPIXEL))
+            while (cptH_patch < length(patch.screen, 1) && cptH_main < length(mainScreen.screen, 1)) {
+                while (cptW_patch < length(patch.screen, 2) && cptW_main < length(mainScreen.screen, 2)) {
+                    if (!eraseNonEmpty && !equals(patch.screen[cptH_patch][cptW_patch], EMPTYPIXEL)) 
                     if (cptH_main >= 0 && cptW_main >= 0) {
-                        main.screen[cptH_main][cptW_main] = patch.screen[cptH_patch][cptW_patch];
+                        mainScreen.screen[cptH_main][cptW_main] = patch.screen[cptH_patch][cptW_patch];
                     }
                     cptW_main = cptW_main + 1;
                     cptW_patch = cptW_patch + 1;
@@ -345,125 +348,125 @@ class AcademicArena extends Program {
 
     }
 
-    void removePatch(Screen main, Screen patch, int h, int w) {
+    void removePatch(Screen mainScreen, Screen patch, int h, int w) {
         Screen n = newScreen(patch.height, patch.width);
         for (int i = 0; i < length(n.screen, 1); i++) {
             for (int j = 0; j < length(n.screen, 2); j++) {
                 n.screen[i][j] = newPixel(EMPTY, ANSI_TEXT_DEFAULT_COLOR);
             }
         }
-        applyPatch(main, n, h, w);
+        applyPatch(mainScreen, n, h, w);
     }
 
-    void removePatch(Screen main, Screen patch, int h, int w, boolean transistion) {
+    void removePatch(Screen mainScreen, Screen patch, int h, int w, boolean transistion) {
         Screen n = newScreen(1, patch.width);
         drawHorizontalLine(n, 0);
         for (int i = 0; i < patch.height+1; i++) {
             removePatch(patch, n, i-1, 0);
             applyPatch(patch, n, i, 0);
-            applyPatch(main, patch, h, w);
-            refresh(main);
+            applyPatch(mainScreen, patch, h, w);
+            refresh();
         }
     }
 
     
 
-    void moveRight(Screen main, Screen patch, int curH, int curW) {
-        removePatch(main, patch, curH, curW);  
-        applyPatch(main, patch, curH, curW+1);     
+    void moveRight(Screen mainScreen, Screen patch, int curH, int curW) {
+        removePatch(mainScreen, patch, curH, curW);  
+        applyPatch(mainScreen, patch, curH, curW+1);     
     }
 
-    void moveLeft(Screen main, Screen patch, int curH, int curW) {
-        removePatch(main, patch, curH, curW);  
-        applyPatch(main, patch, curH, curW-1);     
+    void moveLeft(Screen mainScreen, Screen patch, int curH, int curW) {
+        removePatch(mainScreen, patch, curH, curW);  
+        applyPatch(mainScreen, patch, curH, curW-1);     
     }
 
-    void moveTop(Screen main, Screen patch, int curH, int curW) {
-        removePatch(main, patch, curH, curW);  
-        applyPatch(main, patch, curH - 1, curW);
+    void moveTop(Screen mainScreen, Screen patch, int curH, int curW) {
+        removePatch(mainScreen, patch, curH, curW);  
+        applyPatch(mainScreen, patch, curH - 1, curW);
     }
 
-    void moveBottom(Screen main, Screen patch, int curH, int curW) {
-        removePatch(main, patch, curH, curW);  
-        applyPatch(main, patch, curH + 1, curW);     
+    void moveBottom(Screen mainScreen, Screen patch, int curH, int curW) {
+        removePatch(mainScreen, patch, curH, curW);  
+        applyPatch(mainScreen, patch, curH + 1, curW);     
     }
 
 
-    void moveTo(Screen main, Screen patch, int curH, int curW, int targetH, int targetW, int speed) {
+    void moveTo(Screen mainScreen, Screen patch, int curH, int curW, int targetH, int targetW, int speed) {
         if (targetH > curH) {
             while (curH != targetH) {
-                moveBottom(main, patch, curH, curW);
+                moveBottom(mainScreen, patch, curH, curW);
                 curH = curH + 1;
                 if (curH % speed == 0) {
-                    refresh(main);
+                    refresh();
                 }
             }
         }
         else if (targetH < curH) {
             while (curH != targetH) {
-                moveTop(main, patch, curH, curW);
+                moveTop(mainScreen, patch, curH, curW);
                 curH = curH - 1;
                 if (curH % speed == 0) {
-                    refresh(main);
+                    refresh();
                 }
             }
         }
         if (targetW > curW) {
             while (curW != targetW) {
-                moveRight(main, patch, curH, curW);
+                moveRight(mainScreen, patch, curH, curW);
                 curW = curW + 1;
                 if (curW % speed == 0) {
-                    refresh(main);
+                    refresh();
                 }
             }
         }
         else if (targetW < curW) {
             while (curW != targetW) {
-                moveLeft(main, patch, curH, curW);
+                moveLeft(mainScreen, patch, curH, curW);
                 curW = curW - 1;
                 if (curW % speed == 0) {
-                    refresh(main);
+                    refresh();
                 }
             }
         }
-        refresh(main);
+        refresh();
     }
 
     
 
-    void drawVerticalLine(Screen main, int w, String color) {
-        Screen line = newScreen(main.height, 1);
+    void drawVerticalLine(Screen mainScreen, int w, String color) {
+        Screen line = newScreen(mainScreen.height, 1);
         for (int i = 1; i < line.height; i++) {
             line.screen[i][0] = newPixel('▐', color);
         }
-        applyPatch(main, line, 0, w);
+        applyPatch(mainScreen, line, 0, w);
     }
 
-    void drawVerticalLine(Screen main, int w) {
-        Screen line = newScreen(main.height, 1);
+    void drawVerticalLine(Screen mainScreen, int w) {
+        Screen line = newScreen(mainScreen.height, 1);
         for (int i = 1; i < line.height; i++) {
             line.screen[i][0] = newPixel('▐', "");
         }
-        applyPatch(main, line, 0, w);
+        applyPatch(mainScreen, line, 0, w);
     }
 
-    void drawHorizontalLine(Screen main, int h, String color) {
-        Screen line = newScreen(1, main.width);
+    void drawHorizontalLine(Screen mainScreen, int h, String color) {
+        Screen line = newScreen(1, mainScreen.width);
         for (int i = 0; i < line.width; i++) {
             line.screen[0][i] = newPixel('▁', color);
         }
-        applyPatch(main, line, h, 0);
+        applyPatch(mainScreen, line, h, 0);
     }
 
-    void drawHorizontalLine(Screen main, int h) {
-        Screen line = newScreen(1, main.width);
+    void drawHorizontalLine(Screen mainScreen, int h) {
+        Screen line = newScreen(1, mainScreen.width);
         for (int i = 0; i < line.width; i++) {
             line.screen[0][i] = newPixel('▁', "");
         }
-        applyPatch(main, line, h, 0);
+        applyPatch(mainScreen, line, h, 0);
     }
 
-    void afficherLogo(Screen main){
+    void afficherLogo(){
         Screen partA = loadASCII(LOGOPARTA, ANSI_RED);
         Screen partB = loadASCII(LOGOPARTB, ANSI_YELLOW);
         int posX_A = -150;
@@ -476,7 +479,7 @@ class AcademicArena extends Program {
             posX_B = posX_B - 1;
             moveRight(main, partA, posy_A, i);
             moveLeft(main, partB, posy_B, posX_B);
-            refresh(main);
+            refresh();
         } 
 
         print("             Press enter to start                ");
@@ -485,7 +488,7 @@ class AcademicArena extends Program {
         for (int i = 0; i < 50; i++) {
             moveTop(main, partA, posy_A - i, posX_A) ;
             moveBottom(main, partB, posy_B + i, posX_B);
-            refresh(main);
+            refresh();
         }
 
 
@@ -535,8 +538,8 @@ class AcademicArena extends Program {
 
     
 
-    Screen chooseCharacter(Screen main) {
-        Screen choice = newScreen((main.height/4) * 3, main.width);
+    Screen chooseCharacter() {
+        Screen choice = newScreen(main.height, main.width);
         Screen prompt = newScreen(main.height/4, main.width);
         int curH = 3;
         int witdh_last = 0;
@@ -563,10 +566,10 @@ class AcademicArena extends Program {
             witdh_last = witdh_last + list_perso[i].width;
         }
         applyPatch(main, choice, 0, 0);
-        applyPatch(main, prompt, choice.height, 0, false);
+        applyPatch(main, prompt, main.height - choice.height +20, 0, false);
         
         do {
-            refresh(main);
+            refresh();
 
             print("Choose your character : ");
 
@@ -611,7 +614,7 @@ class AcademicArena extends Program {
                 moveTop(main, list_perso[r-1], hchoice, wchoice);
                 hchoice = hchoice - 1;
             }
-            print(toString(main));
+            refresh();
         }
         pos = wchoice - midlew;
         while (pos != 0) {
@@ -634,9 +637,9 @@ class AcademicArena extends Program {
                 moveLeft(main, list_perso[r-1], hchoice, wchoice);
                 wchoice = wchoice - 1;
             }
-            print(toString(main));
+            refresh();
         }
-        refresh(main);
+        refresh();
         return list_perso[r-1];
 
     }
@@ -651,7 +654,7 @@ class AcademicArena extends Program {
         return list[choice];
     }
 
-    Mob[] genMob(Screen main , int nombre) {
+    Mob[] genMob(int nombre) {
         loadMob();
         Mob[] lsMob = new Mob[nombre];
         Mob mob ;
@@ -667,7 +670,7 @@ class AcademicArena extends Program {
             lsMob[cpt] = mob;
             cpt = cpt + 1;
             posy_last = posy_last + main.height/nombre;
-            refresh(main);
+            refresh();
         }
         return lsMob;
     }
@@ -690,7 +693,7 @@ class AcademicArena extends Program {
         return result;
     }
 
-    void updateMobHpBar(Screen main, Mob mob) {       
+    void updateMobHpBar(Mob mob) {       
         Screen hpBar = newScreen(1, mob.hp*20/mob.initialHp);
 
         removePatch(main, newScreen(1, 20), mob.posy + mob.visuel.height, mob.posx);
@@ -707,7 +710,7 @@ class AcademicArena extends Program {
         applyPatch(main, hpBar, mob.posy + mob.visuel.height, mob.posx);
     }
 
-    void updateMobBattle(Screen main, Mob[] lsMob) {
+    void updateMobBattle( Mob[] lsMob) {
         Mob mob;
         for (int i = 0; i < length(lsMob); i++) {
             mob = lsMob[i];
@@ -720,29 +723,29 @@ class AcademicArena extends Program {
                 
             }
             else {
-                updateMobHpBar(main, mob);
+                updateMobHpBar( mob);
             }
             
         }
     }
 
-    boolean genWawe(Screen main, int waweNumber, int difficulty) {
-        Mob[] listToDefeat = genMob(main, waweNumber);
+    boolean genWawe( int waweNumber, int difficulty) {
+        Mob[] listToDefeat = genMob( waweNumber);
         boolean gameOver = false;
         int cpt = 0;
         while (!allDead(listToDefeat) && !gameOver ) {
             removePatch(main, newScreen(7, 8), 2, 10);
             applyPatch(main, getNumber(waweNumber, ANSI_TEXT_DEFAULT_COLOR), 2, 10);
-            updateMobBattle(main, listToDefeat);
-            refresh(main);
+            updateMobBattle( listToDefeat);
+            refresh();
             println("Qui voulez vous attaquer ? ");
             int choice = chooseNumber(1, length(listToDefeat)) - 1;
             if (!listToDefeat[choice].dead) {
-                refresh(main);
+                refresh();
                 println("Vous attaquez le mob " + (choice + 1));
                 listToDefeat[choice].hp = listToDefeat[choice].hp - 2;
-                updateMobBattle(main, listToDefeat);
-                refresh(main);
+                updateMobBattle( listToDefeat);
+                refresh();
                 cpt = cpt + 1;
             }
             
@@ -751,6 +754,8 @@ class AcademicArena extends Program {
 
 
     }
+
+    // Operation chooseAttack()
 
     int sumWidth(Screen[] screens) {
         int result = 0;
@@ -797,11 +802,11 @@ class AcademicArena extends Program {
 
     }
 
-    boolean genLevel(Screen main, int level) {
+    boolean genLevel(int level) {
         int cpt = 0;
         boolean gameOver = false;
         while (cpt < 3 && !gameOver) {
-            gameOver = genWawe(main, cpt+1, 1);
+            gameOver = genWawe( cpt+1, 1);
             cpt = cpt + 1;
         }
         return gameOver;
@@ -827,23 +832,22 @@ class AcademicArena extends Program {
 
     void algorithm() {
         loadMob();
-        Screen main = newScreen(51,250);
         boolean gameOver = false;
         Player player;
         int level = 1;
 
-        afficherLogo(main);
-        chooseCharacter(main);
+        afficherLogo();
+        chooseCharacter();
         while (!gameOver) {
-            genLevel(main, level);
+            genLevel(level);
         }
         //genWawe(main, 2, 1);
-        refresh(main);
+        refresh();
     }
 
 
     void _algorithm() {
-        refresh(genText("prout", ""));
+        refresh();
     }
 
 }
