@@ -2,32 +2,78 @@ class AcademicArena extends Program {
 
 
 
-    char EMPTY = ' ';
-    Pixel EMPTYPIXEL = newPixelEmpty();
-    String RESSOURCESDIR = "ressources";
-    String LOGOPARTA = RESSOURCESDIR + "/" + "academic.txt";
-    String LOGOPARTB = RESSOURCESDIR + "/" + "arena.txt";
-    String PLAYER = RESSOURCESDIR + "/" + "player.txt";
-    String PLAYER2 = RESSOURCESDIR + "/" + "playertest.txt";
-    String PLAYER3 = RESSOURCESDIR + "/" + "player3.txt";
-    String PLAYER4 = RESSOURCESDIR + "/" + "player4.txt";
-    String choosecharacter = RESSOURCESDIR + "/" + "choose.txt";
-    String NUMBERDIR = RESSOURCESDIR + "/" + "numbers";
-    String MOBDIR = RESSOURCESDIR + "/" + "mobs";
-    String PLAYERFILE = RESSOURCESDIR + "/" + "players.csv";
-
-    char[] list_EMPTY = new char[]{' ', ' ', ' ', ' ', ' ',' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '　', '⠀'};
+    final char EMPTY = ' ';
+    final Pixel EMPTY_PIXEL = newPixelEmpty();
+    final String RESSOURCES_DIR = "ressources";
+    final String OPERATOR_DIR = RESSOURCES_DIR + "/" + "operators";
+    final String LOGO_PART_A = RESSOURCES_DIR + "/" + "academic.txt";
+    final String LOGO_PART_B = RESSOURCES_DIR + "/" + "arena.txt";
+    final String PLAYER = RESSOURCES_DIR + "/" + "player.txt";
+    final String PLAYER_2 = RESSOURCES_DIR + "/" + "player2.txt";
+    final String PLAYER_3 = RESSOURCES_DIR + "/" + "player3.txt";
+    final String PLAYER_4 = RESSOURCES_DIR + "/" + "player4.txt";
+    final String NUMBERS_DIR = RESSOURCES_DIR + "/" + "numbers";
+    final String MOB_DIR = RESSOURCES_DIR + "/" + "mobs";
+    final String PLAYERS_FILE = RESSOURCES_DIR + "/" + "players.csv";
+    final char[] LIST_EMPTY = new char[]{' ', ' ', ' ', ' ', ' ',' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '　', '⠀'};
+    final Screen[] LIST_OPERATOR = new Screen[]{loadASCII(OPERATOR_DIR + "/" + "plus.txt", ANSI_RED), loadASCII(OPERATOR_DIR + "/" + "moins.txt", ANSI_GREEN), loadASCII(OPERATOR_DIR + "/" + "fois.txt", ANSI_YELLOW), loadASCII(OPERATOR_DIR + "/" + "division.txt", ANSI_BLUE)};
+    
     Mob[] listMob ;
-
-
     Screen main = newScreen(51,250);
+    Player player;
+
 
     void loadMob() {
-        extensions.CSVFile f = loadCSV(RESSOURCESDIR + "/" + "mob.csv");
+        extensions.CSVFile f = loadCSV(RESSOURCES_DIR + "/" + "mob.csv");
         listMob = new Mob[rowCount(f)-1];
         for (int i = 1; i < rowCount(f); i++) {
-            listMob[i-1] = newMob(StringToInt(getCell(f, i, 0)), StringToInt(getCell(f, i, 1)), getOperation(getCell(f, i, 2)), loadASCII(MOBDIR + "/" + getCell(f, i, 3), getANSI_COLOR(getCell(f, i, 4))), 0, 0);
+            listMob[i-1] = newMob(StringToInt(getCell(f, i, 0)), StringToInt(getCell(f, i, 1)), getOperation(getCell(f, i, 2)), loadASCII(MOB_DIR + "/" + getCell(f, i, 3), getWeaknessColor(getCell(f, i, 2))), 0, 0);
         }
+
+    }
+
+    String getWeaknessColor(String faiblesse) {
+        String result = "";
+        switch (faiblesse) {
+            case "addition":
+                result = ANSI_RED;
+                break;
+            case "multiplication":
+                result = ANSI_YELLOW;
+                break;
+            case "division":
+                result = ANSI_BLUE;
+                break;
+            case "soustraction":
+                result = ANSI_GREEN;
+                break;
+            default:
+                result = ANSI_TEXT_DEFAULT_COLOR;
+                break;
+        }
+        return result;
+    }
+
+    int getPlayerBestScore(String speudo) {
+        extensions.CSVFile f = loadCSV(RESSOURCES_DIR + "/" + "scores.csv");
+        int result = 0;
+        int cpt = 1;
+        while (cpt < rowCount(f) && result == 0) {
+            if (equals(getCell(f, cpt, 0), speudo)) {
+                result = StringToInt(getCell(f, cpt, 1));
+            }
+            cpt = cpt + 1;
+        }
+        return result;
+
+    }
+    Player[] getPlayers() {
+        extensions.CSVFile f = loadCSV(RESSOURCES_DIR + "/" + "scores.csv");
+        Player[] table = new Player[rowCount(f)-1];
+        for (int i = 1; i < rowCount(f); i++) {
+            table[i-1] = newPlayer(getCell(f, i, 0), null);
+        }
+        return table;
 
     }
 
@@ -41,9 +87,9 @@ class AcademicArena extends Program {
 
     String getletterPath(char c) {
         if (c == ' ') {
-            return RESSOURCESDIR + "/letters/" + "space" + ".txt";
+            return RESSOURCES_DIR + "/letters/" + "space" + ".txt";
         }
-        return RESSOURCESDIR + "/letters/" + c + ".txt"; 
+        return RESSOURCES_DIR + "/letters/" + c + ".txt"; 
     }
 
     Operation getOperation(String operation) {
@@ -120,8 +166,8 @@ class AcademicArena extends Program {
     boolean isEmpty(char c) {
         int cpt = 0;
         boolean result = false;
-        while (cpt < length(list_EMPTY) && !result) {
-            result = c == list_EMPTY[cpt];
+        while (cpt < length(LIST_EMPTY) && !result) {
+            result = c == LIST_EMPTY[cpt];
             cpt = cpt + 1;
         }
         return result;
@@ -230,6 +276,15 @@ class AcademicArena extends Program {
         assertEquals(posy, m.posy);
     }
 
+    Player newPlayer(String speudo, Screen character) {
+        Player p = new Player();
+        p.hp = 100;
+        p.atk = 5;
+        p.speudo = speudo;
+        p.character = character;
+        return p;
+    }
+
     Mob copyMob(Mob m) {
         Mob result = newMob(m.hp, m.atk, m.faiblesse, m.visuel, m.posx, m.posy);
         return result;
@@ -331,7 +386,7 @@ class AcademicArena extends Program {
             int cptW_patch = 0;
             while (cptH_patch < length(patch.screen, 1) && cptH_main < length(mainScreen.screen, 1)) {
                 while (cptW_patch < length(patch.screen, 2) && cptW_main < length(mainScreen.screen, 2)) {
-                    if (!eraseNonEmpty && !equals(patch.screen[cptH_patch][cptW_patch], EMPTYPIXEL)) 
+                    if (!eraseNonEmpty && !equals(patch.screen[cptH_patch][cptW_patch], EMPTY_PIXEL)) 
                     if (cptH_main >= 0 && cptW_main >= 0) {
                         mainScreen.screen[cptH_main][cptW_main] = patch.screen[cptH_patch][cptW_patch];
                     }
@@ -467,8 +522,8 @@ class AcademicArena extends Program {
     }
 
     void afficherLogo(){
-        Screen partA = loadASCII(LOGOPARTA, ANSI_RED);
-        Screen partB = loadASCII(LOGOPARTB, ANSI_YELLOW);
+        Screen partA = loadASCII(LOGO_PART_A, ANSI_RED);
+        Screen partB = loadASCII(LOGO_PART_B, ANSI_YELLOW);
         int posX_A = -150;
         int posy_A = 10;
         int posX_B = main.width - (posX_A +  135);
@@ -517,7 +572,7 @@ class AcademicArena extends Program {
             while (number > 0) {
                 int r = number % 10;
                 number = number / 10;
-                list_nb[cpt] = loadASCII(NUMBERDIR + "/" + r + ".txt", color);
+                list_nb[cpt] = loadASCII(NUMBERS_DIR + "/" + r + ".txt", color);
                 cpt = cpt + 1;
             }
             Screen number_ASCII = newScreen(list_nb[0].height, list_nb[0].width + list_nb[1].width + list_nb[2].width);
@@ -530,7 +585,7 @@ class AcademicArena extends Program {
 
             return number_ASCII;        }
         else {
-            Screen number_ASCII = loadASCII(NUMBERDIR + "/" + "0" + ".txt", color);
+            Screen number_ASCII = loadASCII(NUMBERS_DIR + "/" + "0" + ".txt", color);
             return number_ASCII;
         }
     }
@@ -551,13 +606,13 @@ class AcademicArena extends Program {
 
         Screen[] list_perso = new Screen[4];
         list_perso[0] = loadASCII(PLAYER, ANSI_RED);
-        list_perso[1] = loadASCII(PLAYER2, ANSI_GREEN);
-        list_perso[2] = loadASCII(PLAYER3, ANSI_YELLOW);
-        list_perso[3] = loadASCII(PLAYER4, ANSI_BLUE);
+        list_perso[1] = loadASCII(PLAYER_2, ANSI_GREEN);
+        list_perso[2] = loadASCII(PLAYER_3, ANSI_YELLOW);
+        list_perso[3] = loadASCII(PLAYER_4, ANSI_BLUE);
 
 
-        Screen choose_ASCII = loadASCII(choosecharacter, ANSI_WHITE);
-        applyPatch(choice, genText("Choisi ton personnage", ""), curH, choice.width/2 - choose_ASCII.width/2);
+        Screen choose_ASCII = genText("Choisi ton personnage", "");
+        applyPatch(choice, choose_ASCII, curH, choice.width/2 - choose_ASCII.width/2);
         curH = curH + choose_ASCII.height + 3;
         curH = curH + 11;
         for (int i = 0; i < length(list_perso); i++) {
@@ -593,52 +648,7 @@ class AcademicArena extends Program {
         removePatch(main, choice, 0, 0);
         midleh = main.height/2 - list_perso[r-1].height/2;
         midlew = main.width/2 - list_perso[r-1].width/2;
-        int pos = hchoice - midleh;
-        while (pos != 0) {
-            pos = hchoice - midleh;
-            if (pos < 0) {
-                if (pos < -2) {
-                    moveBottom(main, list_perso[r-1], hchoice, wchoice );
-                    moveBottom(main, list_perso[r-1], hchoice+1, wchoice);
-                    hchoice =  hchoice + 2;
-                }
-                moveBottom(main, list_perso[r-1], hchoice, wchoice );
-                hchoice =  hchoice + 1;
-            }
-            else if (pos > 0) {
-                if (pos > 2) {
-                    moveTop(main, list_perso[r-1], hchoice, wchoice);
-                    moveTop(main, list_perso[r-1], hchoice-1, wchoice);
-                    hchoice = hchoice - 2;
-                }
-                moveTop(main, list_perso[r-1], hchoice, wchoice);
-                hchoice = hchoice - 1;
-            }
-            refresh();
-        }
-        pos = wchoice - midlew;
-        while (pos != 0) {
-            pos = wchoice - midlew;
-            if (pos < 0) {
-                if (pos < -2) {
-                    moveRight(main, list_perso[r-1], hchoice, wchoice );
-                    moveRight(main, list_perso[r-1], hchoice, wchoice+1);
-                    wchoice =  wchoice + 2;
-                }
-                moveRight(main, list_perso[r-1], hchoice, wchoice );
-                wchoice =  wchoice + 1;
-            }
-            else if (pos > 0) {
-                if (pos > 2) {
-                    moveLeft(main, list_perso[r-1], hchoice, wchoice);
-                    moveLeft(main, list_perso[r-1], hchoice, wchoice-1);
-                    wchoice = wchoice - 2;
-                }
-                moveLeft(main, list_perso[r-1], hchoice, wchoice);
-                wchoice = wchoice - 1;
-            }
-            refresh();
-        }
+        moveTo(main, list_perso[r-1], hchoice, wchoice, (main.height/2 - list_perso[r-1].height/2) -5, 20, 4);
         refresh();
         return list_perso[r-1];
 
@@ -729,30 +739,149 @@ class AcademicArena extends Program {
         }
     }
 
+    void printPlayerHp() {
+        Screen hp = newScreen(9, 50);
+        String color;
+        if (player.hp > 75) {
+            color = ANSI_GREEN;
+        }
+        else if (player.hp > 50) {
+            color = ANSI_YELLOW;
+        }
+        else {
+            color = ANSI_RED;
+        }
+        Screen text = genText("hp ", ANSI_TEXT_DEFAULT_COLOR);
+        applyPatch(hp, text, 2, 2);
+        applyPatch(hp, getNumber(player.hp, color), 2, text.width + 2);
+        applyPatch(main, hp, main.height - hp.height, 50);
+        
+    }
+
+    int damageToPlayer(int level, Mob mob) {
+        return (int) (random()*mob.atk*level);
+    }
+
+    int damageDoneToMob(Mob mob, Operation op) {
+        if (op == mob.faiblesse) {
+            print("Coup critique ! ");
+            return player.atk * 3;
+        }
+        else {
+            return player.atk;
+        }
+    }
+
+    void printAttack() {
+        int width = 50;
+        int height = 20;
+        int dec = 10;
+        Screen attack = newScreen(height, width);
+        drawHorizontalLine(attack, 0, "");
+        drawVerticalLine(attack, width -1, "");
+        applyPatch(attack, LIST_OPERATOR[0], dec/2, dec);
+        applyPatch(attack, LIST_OPERATOR[1], dec/2 + LIST_OPERATOR[0].height + dec/2, dec);
+        applyPatch(attack, LIST_OPERATOR[2], dec/2, dec + LIST_OPERATOR[0].width + dec*2);
+        applyPatch(attack, LIST_OPERATOR[3], dec/2 + LIST_OPERATOR[2].height + dec/2, dec + LIST_OPERATOR[1].width + dec*2);
+
+        applyPatch(main, attack, main.height - height, 0);
+        refresh();
+
+    }
+
+
+    Operation selectAttaque() {
+        Operation[] listOp = new Operation[]{Operation.ADDITION, Operation.DIVISION, Operation.MULTIPLICATION, Operation.SOUSTRACTION};
+        int choice = 0;
+        Operation op = null;
+        do {
+            choice = readChar();
+            switch (choice) {
+                case '+':
+                    op = Operation.ADDITION;
+                    break;
+                case '-':
+                    op = Operation.SOUSTRACTION;
+                    break;
+                case '*':
+                    op = Operation.MULTIPLICATION;
+                    break;
+                case '/':
+                    op = Operation.DIVISION;
+                    break;
+                default:
+                    op = null;
+                    break;
+            }
+        } while (op == null);
+        return op;
+    }
+
+    void updateBattle(int waweNumber, Mob[] listToDefeat) {
+        Screen wawe = newScreen(10, 30);
+        applyPatch(wawe, getNumber(waweNumber, ANSI_TEXT_DEFAULT_COLOR), 2,  5);
+        applyPatch(wawe, getOpScreen(Operation.DIVISION), 3, 12);
+        applyPatch(wawe, getNumber(2, ANSI_TEXT_DEFAULT_COLOR), 2, 19);
+        applyPatch(main, wawe, 0, 55);
+        updateMobBattle( listToDefeat);
+        printPlayerHp();
+        refresh();
+    }
+
     boolean genWawe( int waweNumber, int difficulty) {
         Mob[] listToDefeat = genMob( waweNumber);
         boolean gameOver = false;
         int cpt = 0;
+        Operation op;
         while (!allDead(listToDefeat) && !gameOver ) {
-            removePatch(main, newScreen(7, 8), 2, 10);
-            applyPatch(main, getNumber(waweNumber, ANSI_TEXT_DEFAULT_COLOR), 2, 10);
-            updateMobBattle( listToDefeat);
-            refresh();
+            updateBattle(waweNumber, listToDefeat);
+            print("quelle attaque voulez vous faire ? (+ - * /)");
+            op = selectAttaque();
             println("Qui voulez vous attaquer ? ");
             int choice = chooseNumber(1, length(listToDefeat)) - 1;
             if (!listToDefeat[choice].dead) {
-                refresh();
-                println("Vous attaquez le mob " + (choice + 1));
-                listToDefeat[choice].hp = listToDefeat[choice].hp - 2;
-                updateMobBattle( listToDefeat);
+                attaquerMob(op, choice, listToDefeat[choice]);
+                updateMobBattle(listToDefeat);
                 refresh();
                 cpt = cpt + 1;
+                player.hp = player.hp - damageToPlayer(difficulty, listToDefeat[choice]);
             }
+            
             
         }
         return gameOver;
 
 
+    }
+
+    void attaquerMob(Operation op, int level, Mob mob) {
+        int nb1 = (int) ((random() * 10) * (level+1));
+        int nb2 = (int) ((random() * 10) * (level+1));
+        if (op == Operation.DIVISION && nb2 == 0) {
+            nb2 = 1;
+        }
+        int response;
+        Screen text;
+        printCalcul(nb1, nb2, op);
+        response = readInt();
+        removecalcul(nb1, nb2, op);
+        if (calculReussi(nb1, nb2, op, response)) {
+            text = genText("OK", ANSI_GREEN);
+            applyPatch(main, text,  main.height/2 - text.height/2, main.width/2 - text.width/2);
+            mob.hp = mob.hp - damageDoneToMob(mob, op);
+            refresh();
+            delay(1000);
+            removePatch(main, text, main.height/2 - text.height/2, main.width/2 - text.width/2);
+
+        }
+        else {
+            text = genText("X", ANSI_RED);
+            applyPatch(main, text, main.height/2 - text.height/2, main.width/2 - text.width/2);
+            refresh();
+            delay(1000);
+            removePatch(main, text, main.height/2 - text.height/2, main.width/2 - text.width/2);
+        }
+        
     }
 
     // Operation chooseAttack()
@@ -802,44 +931,116 @@ class AcademicArena extends Program {
 
     }
 
+    Screen getOpScreen(Operation op) {
+        Screen result = null;
+        switch (op) {
+            case ADDITION:
+                result = LIST_OPERATOR[0];
+                break;
+            case SOUSTRACTION:
+                result = LIST_OPERATOR[1];
+                break;
+            case MULTIPLICATION:
+                result = LIST_OPERATOR[2];
+                break;
+            case DIVISION:
+                result = LIST_OPERATOR[3];
+                break;
+            default:
+                result = null;
+                break;
+        }
+        return result;
+    }
+
+    void printLevel(int level) {
+        Screen levelScreen = newScreen(9, 55);
+        Screen text = genText("Level ", ANSI_WHITE);
+        applyPatch(levelScreen, text, 2, 2);
+        applyPatch(levelScreen, getNumber(level, ANSI_TEXT_DEFAULT_COLOR), 2, text.width);
+        applyPatch(main, levelScreen, 0, 0);
+        refresh();
+    }
+
     boolean genLevel(int level) {
         int cpt = 0;
         boolean gameOver = false;
-        while (cpt < 3 && !gameOver) {
-            gameOver = genWawe( cpt+1, 1);
+        printLevel(level);
+        while (cpt < 2 && !gameOver) {
+            gameOver = genWawe( cpt+1, level);
             cpt = cpt + 1;
         }
         return gameOver;
     }
 
-    // boolean challenge(int min, int max) {
-    //     int nb1;
-    //     int nb2;
-    //     if (min < 0) {
-    //         nb1 = random(-min, max+(-min)) + min;
-    //         nb2 = random(-min, max+(-min)) + min;
-    //     }
-    //     else {
-    //         nb1 = random(min, max);
-    //         nb2 = random(min, max);
-    //     }
+    void drawBorder(Screen screen, String color) {
+        drawHorizontalLine(screen, 0, color);
+        drawHorizontalLine(screen, screen.height-1, color);
+        drawVerticalLine(screen, 0, color);
+        drawVerticalLine(screen, screen.width-1, color);
+    }
 
-    //     int response ;
-    //     print("Reponse : ");
-    //     response = readInt();
-    //     return response == nb1 + nb2;
-    // }   
+    void printCalcul(int nb1, int nb2, Operation op) {
+        Screen[] listNb = new Screen[2];
+        listNb[0] = getNumber(nb1, ANSI_TEXT_DEFAULT_COLOR);
+        listNb[1] = getNumber(nb2, ANSI_TEXT_DEFAULT_COLOR);
+        Screen calcul = newScreen(listNb[0].height + 4, listNb[0].width + listNb[1].width + getOpScreen(op).width + 12);
+        applyPatch(calcul, listNb[0], 2, 2);
+        applyPatch(calcul, getOpScreen(op), 2, listNb[0].width + 4);
+        applyPatch(calcul, listNb[1], 2, listNb[0].width + getOpScreen(op).width + 8);
+        drawBorder(calcul, ANSI_TEXT_DEFAULT_COLOR);
+        applyPatch(main, calcul, main.height/2 - calcul.height/2, main.width/2 - calcul.width/2);
+        refresh();
+    }
+
+    void removecalcul(int nb1, int nb2, Operation op) {
+        Screen[] listNb = new Screen[2];
+        listNb[0] = getNumber(nb1, ANSI_TEXT_DEFAULT_COLOR);
+        listNb[1] = getNumber(nb2, ANSI_TEXT_DEFAULT_COLOR);
+        Screen calcul = newScreen(listNb[0].height + 4, listNb[0].width + listNb[1].width + getOpScreen(op).width + 12);
+        applyPatch(calcul, listNb[0], 2, 2);
+        applyPatch(calcul, getOpScreen(op), 2, listNb[0].width + 4);
+        applyPatch(calcul, listNb[1], 2, listNb[0].width + getOpScreen(op).width + 8);
+        drawBorder(calcul, ANSI_TEXT_DEFAULT_COLOR);
+        removePatch(main, calcul, main.height/2 - calcul.height/2, main.width/2 - calcul.width/2);
+        refresh();
+    }
+
+
+    boolean calculReussi(int nb1, int nb2, Operation op, int response) {
+        boolean result = false;
+        switch (op) {
+            case ADDITION:
+                result = nb1 + nb2 == response;
+                break;
+            case SOUSTRACTION:
+                result = nb1 - nb2 == response;
+                break;
+            case MULTIPLICATION:
+                result = nb1 * nb2 == response;
+                break;
+            case DIVISION:
+                result = nb1 / nb2 == response;
+                break;
+            default:
+                result = false;
+                break;
+        }
+        return result;
+    }
 
     void algorithm() {
         loadMob();
         boolean gameOver = false;
-        Player player;
         int level = 1;
-
-        afficherLogo();
-        chooseCharacter();
+        print("Entrez votre pseudo : ");
+        player = newPlayer(readString(), null);
+        // afficherLogo();
+        player.character = chooseCharacter();
+        printAttack();
         while (!gameOver) {
             genLevel(level);
+            level = level + 1;
         }
         //genWawe(main, 2, 1);
         refresh();
