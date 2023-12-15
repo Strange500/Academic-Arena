@@ -82,7 +82,7 @@ class AcademicArena extends Program {
         drawHorizontalLine(main, main.height-1, ANSI_TEXT_DEFAULT_COLOR);
         drawVerticalLine(main, 0, ANSI_TEXT_DEFAULT_COLOR);
         drawVerticalLine(main, main.width-1, ANSI_TEXT_DEFAULT_COLOR);
-        println(toString(main));
+        println(ANSI_BLACK_BG + toString(main));
     }
 
     String getletterPath(char c) {
@@ -751,7 +751,7 @@ class AcademicArena extends Program {
         else {
             color = ANSI_RED;
         }
-        Screen text = genText("hp ", ANSI_TEXT_DEFAULT_COLOR);
+        Screen text = genText("hp ", ANSI_WHITE);
         applyPatch(hp, text, 2, 2);
         applyPatch(hp, getNumber(player.hp, color), 2, text.width + 2);
         applyPatch(main, hp, main.height - hp.height, 50);
@@ -819,9 +819,9 @@ class AcademicArena extends Program {
 
     void updateBattle(int waweNumber, Mob[] listToDefeat) {
         Screen wawe = newScreen(10, 30);
-        applyPatch(wawe, getNumber(waweNumber, ANSI_TEXT_DEFAULT_COLOR), 2,  5);
+        applyPatch(wawe, getNumber(waweNumber, ANSI_WHITE), 2,  5);
         applyPatch(wawe, getOpScreen(Operation.DIVISION), 3, 12);
-        applyPatch(wawe, getNumber(2, ANSI_TEXT_DEFAULT_COLOR), 2, 19);
+        applyPatch(wawe, getNumber(2, ANSI_WHITE), 2, 19);
         applyPatch(main, wawe, 0, 55);
         updateMobBattle( listToDefeat);
         printPlayerHp();
@@ -957,7 +957,7 @@ class AcademicArena extends Program {
         Screen levelScreen = newScreen(9, 55);
         Screen text = genText("Level ", ANSI_WHITE);
         applyPatch(levelScreen, text, 2, 2);
-        applyPatch(levelScreen, getNumber(level, ANSI_TEXT_DEFAULT_COLOR), 2, text.width);
+        applyPatch(levelScreen, getNumber(level, ANSI_WHITE), 2, text.width);
         applyPatch(main, levelScreen, 0, 0);
         refresh();
     }
@@ -1035,7 +1035,7 @@ class AcademicArena extends Program {
         int level = 1;
         print("Entrez votre pseudo : ");
         player = newPlayer(readString(), null);
-        // afficherLogo();
+        afficherLogo();
         player.character = chooseCharacter();
         printAttack();
         while (!gameOver) {
@@ -1044,6 +1044,7 @@ class AcademicArena extends Program {
         }
         //genWawe(main, 2, 1);
         refresh();
+        reset();
     }
 
 
