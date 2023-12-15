@@ -82,7 +82,7 @@ class AcademicArena extends Program {
         drawHorizontalLine(main, main.height-1, ANSI_TEXT_DEFAULT_COLOR);
         drawVerticalLine(main, 0, ANSI_TEXT_DEFAULT_COLOR);
         drawVerticalLine(main, main.width-1, ANSI_TEXT_DEFAULT_COLOR);
-        println(ANSI_BLACK_BG + toString(main));
+        println(toString(main));
     }
 
     String getletterPath(char c) {
