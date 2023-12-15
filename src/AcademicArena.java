@@ -869,6 +869,7 @@ class AcademicArena extends Program {
             refresh();
             delay(1000);
             removePatch(main, text, main.height/2 - text.height/2, main.width/2 - text.width/2);
+            player.hp = player.hp + 10;
 
         }
         else {
