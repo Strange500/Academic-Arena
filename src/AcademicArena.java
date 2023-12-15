@@ -601,8 +601,6 @@ class AcademicArena extends Program {
         int r;
         int hchoice = 0;
         int wchoice = 0;
-        int midleh;
-        int midlew;
 
         Screen[] list_perso = new Screen[4];
         list_perso[0] = loadASCII(PLAYER, ANSI_RED);
@@ -646,8 +644,6 @@ class AcademicArena extends Program {
         choice = newScreen((main.height/4) * 3, main.width);
         removePatch(main, prompt, choice.height, 0);
         removePatch(main, choice, 0, 0);
-        midleh = main.height/2 - list_perso[r-1].height/2;
-        midlew = main.width/2 - list_perso[r-1].width/2;
         moveTo(main, list_perso[r-1], hchoice, wchoice, (main.height/2 - list_perso[r-1].height/2) -5, 20, 4);
         refresh();
         return list_perso[r-1];
@@ -759,7 +755,7 @@ class AcademicArena extends Program {
     }
 
     int damageToPlayer(int level, Mob mob) {
-        return (int) (random()*mob.atk*level);
+        return (int) (random()*mob.atk*level) * 5;
     }
 
     int damageDoneToMob(Mob mob, Operation op) {
@@ -791,7 +787,6 @@ class AcademicArena extends Program {
 
 
     Operation selectAttaque() {
-        Operation[] listOp = new Operation[]{Operation.ADDITION, Operation.DIVISION, Operation.MULTIPLICATION, Operation.SOUSTRACTION};
         int choice = 0;
         Operation op = null;
         do {
@@ -846,6 +841,8 @@ class AcademicArena extends Program {
                 cpt = cpt + 1;
                 player.hp = player.hp - damageToPlayer(difficulty, listToDefeat[choice]);
             }
+
+            gameOver = player.hp <= 0;
             
             
         }
@@ -1039,7 +1036,7 @@ class AcademicArena extends Program {
         player.character = chooseCharacter();
         printAttack();
         while (!gameOver) {
-            genLevel(level);
+            gameOver = genLevel(level);
             level = level + 1;
         }
         //genWawe(main, 2, 1);
