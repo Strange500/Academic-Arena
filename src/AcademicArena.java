@@ -18,7 +18,7 @@ class AcademicArena extends Program {
     final String PLAYERS_FILE = RESSOURCES_DIR + "/" + "players.csv";
     final char[] LIST_EMPTY = new char[]{' ', ' ', ' ', ' ', ' ',' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '　', '⠀'};
     final Screen[] LIST_OPERATOR = new Screen[]{loadASCII(OPERATOR_DIR + "/" + "plus.txt", ANSI_RED), loadASCII(OPERATOR_DIR + "/" + "moins.txt", ANSI_GREEN), loadASCII(OPERATOR_DIR + "/" + "fois.txt", ANSI_YELLOW), loadASCII(OPERATOR_DIR + "/" + "division.txt", ANSI_BLUE)};
-    
+    Question[] listQuestion;
     Mob[] listMob ;
     Screen main = newScreen(51,250);
     Player player;
@@ -30,6 +30,23 @@ class AcademicArena extends Program {
         for (int i = 1; i < rowCount(f); i++) {
             listMob[i-1] = newMob(StringToInt(getCell(f, i, 0)), StringToInt(getCell(f, i, 1)), getOperation(getCell(f, i, 2)), loadASCII(MOB_DIR + "/" + getCell(f, i, 3), getWeaknessColor(getCell(f, i, 2))), 0, 0);
         }
+
+    }
+
+    void loadQuestion() {
+        extensions.CSVFile f = loadCSV(RESSOURCES_DIR + "/" + "bonus.csv");
+        listQuestion = new Question[rowCount(f)-1];
+        for (int i = 1; i < rowCount(f); i++) {
+            listQuestion[i-1] = newQuestion(getCell(f, i, 0), getCell(f, i, 1));
+        }
+
+    }
+
+    Question newQuestion(String question, String reponse) {
+        Question q = new Question;
+        q.question = question;
+        q.reponse = reponse;
+        return q;
 
     }
 
@@ -223,6 +240,11 @@ class AcademicArena extends Program {
 
     boolean equals(Pixel p1, Pixel p2) {
         return charAt(p1.c, length(p1.c) - 1) ==  charAt(p2.c, length(p2.c) - 1);
+    }
+
+    Pixel copy(Pixel p1) {
+        Pixel p = newPixel(p1.c);
+        return p;
     }
 
     void testEqualsPixel() {
@@ -661,6 +683,11 @@ class AcademicArena extends Program {
         return list[choice];
     }
 
+    Question randomChoice(Question[] list) {
+        int choice =(int) ( random() * length(list));
+        return list[choice];
+    }
+
     Mob[] genMob(int nombre) {
         loadMob();
         Mob[] lsMob = new Mob[nombre];
@@ -887,7 +914,6 @@ class AcademicArena extends Program {
         
     }
 
-    // Operation chooseAttack()
 
     int sumWidth(Screen[] screens) {
         int result = 0;
@@ -933,6 +959,33 @@ class AcademicArena extends Program {
          return generatedtext;
 
     }
+
+    Screen deepCopy(Screen ecran) {
+        Screen result = newScreen(ecran.height, ecran.width);
+        for (int i =0; i< result.height; i++) {
+
+            for (int j = 0; j < result.width; j++) {
+
+                result[i][j] = copy(ecran.screen[i][j]);
+
+            }
+        }
+        return result;
+    }
+
+   boolean questionBonus() {
+        Question q = randomChoice(listQuestion);
+        Screen saveScreen = deepCopy(main);
+        removePatch(main, main, 0, 0);
+        Screen text = genText(q.question);
+        applyPatch(main, text, main.height/2-text.height/2, main.width/2-text.width/2);
+        refresh();
+        String response = readString();
+        applyPatch(main, saveScreen, 0, 0);
+        return equals(reponse, q.reponse);
+   }
+
+   
 
     Screen getOpScreen(Operation op) {
         Screen result = null;
@@ -1047,7 +1100,6 @@ class AcademicArena extends Program {
             gameOver = genLevel(level);
             level = level + 1;
         }
-        //genWawe(main, 2, 1);
         refresh();
         reset();
         Screen SR=loadASCII(GAMEOVER,ANSI_RED);
