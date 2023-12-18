@@ -43,7 +43,7 @@ class AcademicArena extends Program {
     }
 
     Question newQuestion(String question, String reponse) {
-        Question q = new Question;
+        Question q = new Question();
         q.question = question;
         q.reponse = reponse;
         return q;
@@ -988,7 +988,7 @@ class AcademicArena extends Program {
         return equals(reponse, q.reponse);
    }
 
-   
+
 
     Screen getOpScreen(Operation op) {
         Screen result = null;
