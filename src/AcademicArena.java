@@ -838,14 +838,19 @@ class AcademicArena extends Program {
             if (!listToDefeat[choice].dead) {
                 attaquerMob(op, choice, listToDefeat[choice]);
                 updateMobBattle(listToDefeat);
-                refresh();
                 cpt = cpt + 1;
                 player.hp = player.hp - damageToPlayer(difficulty, listToDefeat[choice]);
             }
+            
+            refresh();
 
             gameOver = player.hp <= 0;
             
             
+        }
+        if (gameOver) {
+            player.hp = 0;
+            updateMobBattle(listToDefeat);
         }
         return gameOver;
 
@@ -1027,6 +1032,7 @@ class AcademicArena extends Program {
         return result;
     }
 
+
     void algorithm() {
         loadMob();
         boolean gameOver = false;
@@ -1052,8 +1058,6 @@ class AcademicArena extends Program {
     }
 
 
-    void _algorithm() {
-        refresh();
-    }
+    
 
 }
