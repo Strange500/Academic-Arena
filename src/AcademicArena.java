@@ -1052,6 +1052,7 @@ class AcademicArena extends Program {
         reset();
         Screen SR=loadASCII(GAMEOVER,ANSI_RED);
         if (gameOver){
+            removePatch(main,main, 0,0);
             applyPatch(main,SR,main.height/2-SR.height/2,main.width/2-SR.width/2);
             refresh();
         }
