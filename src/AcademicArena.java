@@ -82,7 +82,7 @@ class AcademicArena extends Program {
         drawHorizontalLine(main, main.height-1, ANSI_TEXT_DEFAULT_COLOR);
         drawVerticalLine(main, 0, ANSI_TEXT_DEFAULT_COLOR);
         drawVerticalLine(main, main.width-1, ANSI_TEXT_DEFAULT_COLOR);
-        println(toString(main));
+        println(ANSI_BLACK_BG + toString(main));
     }
 
     String getletterPath(char c) {
@@ -755,7 +755,7 @@ class AcademicArena extends Program {
     }
 
     int damageToPlayer(int level, Mob mob) {
-        return (int) (random()*mob.atk*level) * 5;
+        return (int) (random()*mob.atk*level) * 3;
     }
 
     int damageDoneToMob(Mob mob, Operation op) {
@@ -874,7 +874,6 @@ class AcademicArena extends Program {
             refresh();
             delay(1000);
             removePatch(main, text, main.height/2 - text.height/2, main.width/2 - text.width/2);
-            player.hp = player.hp + 10;
 
         }
         else {
@@ -1037,6 +1036,7 @@ class AcademicArena extends Program {
         loadMob();
         boolean gameOver = false;
         int level = 1;
+        playSound("./Music3.wav");
         print("Entrez votre pseudo : ");
         player = newPlayer(readString(), null);
         afficherLogo();
