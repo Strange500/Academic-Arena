@@ -783,15 +783,18 @@ class AcademicArena extends Program {
     }
 
     int damageToPlayer(int level, Mob mob) {
+        playSound("./Son/hitHurt.wav");
         return (int) (random()*mob.atk*level) * 3;
     }
 
     int damageDoneToMob(Mob mob, Operation op) {
         if (op == mob.faiblesse) {
             print("Coup critique ! ");
+            playSound("./Son/hitToMob.wav");
             return player.atk * 3;
         }
         else {
+            playSound("./Son/hitToMob.wav");
             return player.atk;
         }
     }
