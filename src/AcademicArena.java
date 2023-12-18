@@ -5,6 +5,7 @@ class AcademicArena extends Program {
     final char EMPTY = ' ';
     final Pixel EMPTY_PIXEL = newPixelEmpty();
     final String RESSOURCES_DIR = "ressources";
+    final String GAMEOVER = RESSOURCES_DIR + "/" + "gameOver.txt";
     final String OPERATOR_DIR = RESSOURCES_DIR + "/" + "operators";
     final String LOGO_PART_A = RESSOURCES_DIR + "/" + "academic.txt";
     final String LOGO_PART_B = RESSOURCES_DIR + "/" + "arena.txt";
@@ -1043,6 +1044,11 @@ class AcademicArena extends Program {
         //genWawe(main, 2, 1);
         refresh();
         reset();
+        Screen SR=loadASCII(GAMEOVER,ANSI_RED);
+        if (gameOver){
+            applyPatch(main,SR,main.height/2-SR.height/2,main.width/2-SR.width/2);
+            refresh();
+        }
     }
 
 
