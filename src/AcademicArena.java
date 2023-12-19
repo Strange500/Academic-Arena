@@ -13,9 +13,12 @@ class AcademicArena extends Program {
     final String PLAYER_2 = RESSOURCES_DIR + "/" + "player2.txt";
     final String PLAYER_3 = RESSOURCES_DIR + "/" + "player3.txt";
     final String PLAYER_4 = RESSOURCES_DIR + "/" + "player4.txt";
+    final String SWORD = RESSOURCES_DIR + "/" + "swords.txt";
+    final String HEART = RESSOURCES_DIR + "/" + "heart.txt";
     final String NUMBERS_DIR = RESSOURCES_DIR + "/" + "numbers";
     final String MOB_DIR = RESSOURCES_DIR + "/" + "mobs";
     final String PLAYERS_FILE = RESSOURCES_DIR + "/" + "players.csv";
+
     final char[] LIST_EMPTY = new char[]{' ', ' ', ' ', ' ', ' ',' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '　', '⠀'};
     final Screen[] LIST_OPERATOR = new Screen[]{loadASCII(OPERATOR_DIR + "/" + "plus.txt", ANSI_RED), loadASCII(OPERATOR_DIR + "/" + "moins.txt", ANSI_GREEN), loadASCII(OPERATOR_DIR + "/" + "fois.txt", ANSI_YELLOW), loadASCII(OPERATOR_DIR + "/" + "division.txt", ANSI_BLUE)};
     Question[] listQuestion;
@@ -864,6 +867,7 @@ class AcademicArena extends Program {
         refresh();
     }
 
+
     boolean genWawe( int waweNumber, int difficulty) {
         Mob[] listToDefeat = genMob( waweNumber);
         boolean gameOver = false;
@@ -878,8 +882,14 @@ class AcademicArena extends Program {
             if (!listToDefeat[choice].dead) {
                 attaquerMob(op, choice, listToDefeat[choice]);
                 updateMobBattle(listToDefeat);
+                if (!listToDefeat[choice].dead) {
+                    player.hp = player.hp - damageToPlayer(difficulty, listToDefeat[choice]);
+                }
                 cpt = cpt + 1;
-                player.hp = player.hp - damageToPlayer(difficulty, listToDefeat[choice]);
+            }
+            else {
+                print("Ce mob est deja mort ! ");
+                delay(1000);
             }
             
             refresh();
@@ -890,8 +900,9 @@ class AcademicArena extends Program {
         }
         if (gameOver) {
             player.hp = 0;
-            updateMobBattle(listToDefeat);
+            
         }
+        updateMobBattle(listToDefeat);
         return gameOver;
 
 
@@ -923,6 +934,9 @@ class AcademicArena extends Program {
             refresh();
             delay(1000);
             removePatch(main, text, main.height/2 - text.height/2, main.width/2 - text.width/2);
+        }
+        if (mob.hp <= 0) {
+            mob.hp = 0;
         }
         
     }
@@ -1117,6 +1131,28 @@ class AcademicArena extends Program {
         return result;
     }
 
+    void chooseBonus() {
+        Screen saveScreen = deepCopy(main);
+        Screen text = genText("Choisi un bonus", ANSI_WHITE);
+        Screen heal = loadASCII(HEART, ANSI_RED);
+        Screen atk = loadASCII(SWORD, ANSI_WHITE);
+        removePatch(main, main, 0, 0);
+        applyPatch(main, text, 2, main.width/2-text.width/2);
+        applyPatch(main, heal, main.height/2 - heal.height/2 + 2, main.width/2 - heal.width/2 - main.width/8);
+        applyPatch(main, atk, main.height/2 - atk.height/2 + 2, main.width/2 + atk.width/2 );
+        refresh();
+        int choice = chooseNumber(1, 2);
+        if (choice == 1) {
+            player.hp = player.hp + 50;
+        }
+        else {
+            player.atk = player.atk + 5;
+        }
+        applyPatch(main, saveScreen, 0, 0);
+        refresh();
+
+    }
+
 
     void algorithm() {
         loadMob();
@@ -1126,13 +1162,13 @@ class AcademicArena extends Program {
         playSound("./Music3.wav");
         print("Entrez votre pseudo : ");
         player = newPlayer(readString(), null);
-        afficherLogo();
+        //afficherLogo();
         player.character = chooseCharacter();
         printAttack();
         while (!gameOver) {
             gameOver = genLevel(level);
-            if (questionBonus()) {
-                print("bien jouer ma geule");
+            if (!gameOver && questionBonus()) {
+                chooseBonus();
             }
             level = level + 1;
         }
@@ -1146,29 +1182,30 @@ class AcademicArena extends Program {
         }
     }
 
-    // void _algorithm() {
-    //     // loadMob();
-    //     // boolean gameOver = false;
-    //     // int level = 1;
-    //     // playSound("./Music3.wav");
-    //     // print("Entrez votre pseudo : ");
-    //     // player = newPlayer(readString(), null);
-    //     // afficherLogo();
-    //     // player.character = chooseCharacter();
-    //     // printAttack();
-    //     // while (!gameOver) {
-    //     //     gameOver = genLevel(level);
-    //     //     level = level + 1;
-    //     // }
-    //     // refresh();
-    //     // reset();
-    //     // Screen SR=loadASCII(GAMEOVER,ANSI_RED);
-    //     // if (gameOver){
-    //     //     removePatch(main,main, 0,0);
-    //     //     applyPatch(main,SR,main.height/2-SR.height/2,main.width/2-SR.width/2);
-    //     //     refresh();
-    //     // }
-    // }
+    void _algorithm() {
+
+        // loadMob();
+        // boolean gameOver = false;
+        // int level = 1;
+        // playSound("./Music3.wav");
+        // print("Entrez votre pseudo : ");
+        // player = newPlayer(readString(), null);
+        // afficherLogo();
+        // player.character = chooseCharacter();
+        // printAttack();
+        // while (!gameOver) {
+        //     gameOver = genLevel(level);
+        //     level = level + 1;
+        // }
+        // refresh();
+        // reset();
+        // Screen SR=loadASCII(GAMEOVER,ANSI_RED);
+        // if (gameOver){
+        //     removePatch(main,main, 0,0);
+        //     applyPatch(main,SR,main.height/2-SR.height/2,main.width/2-SR.width/2);
+        //     refresh();
+        // }
+    }
 
     
 
