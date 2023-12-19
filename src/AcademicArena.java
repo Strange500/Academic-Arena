@@ -23,7 +23,16 @@ class AcademicArena extends Program {
     Screen main = newScreen(51,250);
     Player player;
 
-
+    int indexNearSpace(String text, int index) {
+        int result = index;
+        while (charAt(text, result) != ' ' && result > 0) {
+            result = result - 1;
+        }
+        while (charAt(text, result) != ' ' && result < length(text)) {
+            result = result + 1;
+        }
+        return result;
+    }
     void loadMob() {
         extensions.CSVFile f = loadCSV(RESSOURCES_DIR + "/" + "mob.csv");
         listMob = new Mob[rowCount(f)-1];
@@ -243,7 +252,8 @@ class AcademicArena extends Program {
     }
 
     Pixel copy(Pixel p1) {
-        Pixel p = newPixel(p1.c);
+        Pixel p = newPixel('c', ANSI_TEXT_DEFAULT_COLOR);
+        p.c = p1.c;
         return p;
     }
 
@@ -963,13 +973,30 @@ class AcademicArena extends Program {
 
     }
 
+     Screen fitText(Screen screen, String text) {
+        if (length(text)*8 < screen.width) {
+            return genText(text, ANSI_TEXT_DEFAULT_COLOR);
+        }
+        else {
+            int cut_index = indexNearSpace(text, ((length(text)*8)%screen.width)%length(text));
+            print(cut_index);
+            Screen p1 = genText(substring(text, 0, cut_index), ANSI_WHITE);
+            Screen p2 = genText(substring(text, cut_index, length(text)), ANSI_WHITE);
+            Screen result = newScreen(p1.height + p2.height, screen.width);
+            applyPatch(result, p1, 0, result.width/2-p1.width/2);
+            applyPatch(result, p2, p1.height, result.width/2-p2.width/2);
+            return result;
+        }
+        
+    }
+
     Screen deepCopy(Screen ecran) {
         Screen result = newScreen(ecran.height, ecran.width);
         for (int i =0; i< result.height; i++) {
 
             for (int j = 0; j < result.width; j++) {
 
-                result[i][j] = copy(ecran.screen[i][j]);
+                result.screen[i][j] = copy(ecran.screen[i][j]);
 
             }
         }
@@ -980,12 +1007,14 @@ class AcademicArena extends Program {
         Question q = randomChoice(listQuestion);
         Screen saveScreen = deepCopy(main);
         removePatch(main, main, 0, 0);
-        Screen text = genText(q.question);
+        Screen text = fitText(main, q.question);
+        Screen title = genText("Question Bonus", ANSI_WHITE);
+        applyPatch(main, title, 2, main.width/2-title.width/2);
         applyPatch(main, text, main.height/2-text.height/2, main.width/2-text.width/2);
         refresh();
         String response = readString();
         applyPatch(main, saveScreen, 0, 0);
-        return equals(reponse, q.reponse);
+        return equals(response, q.reponse);
    }
 
 
@@ -1091,6 +1120,7 @@ class AcademicArena extends Program {
 
     void algorithm() {
         loadMob();
+        loadQuestion();
         boolean gameOver = false;
         int level = 1;
         playSound("./Music3.wav");
@@ -1101,6 +1131,9 @@ class AcademicArena extends Program {
         printAttack();
         while (!gameOver) {
             gameOver = genLevel(level);
+            if (questionBonus()) {
+                print("bien jouer ma geule");
+            }
             level = level + 1;
         }
         refresh();
@@ -1113,6 +1146,29 @@ class AcademicArena extends Program {
         }
     }
 
+    // void _algorithm() {
+    //     // loadMob();
+    //     // boolean gameOver = false;
+    //     // int level = 1;
+    //     // playSound("./Music3.wav");
+    //     // print("Entrez votre pseudo : ");
+    //     // player = newPlayer(readString(), null);
+    //     // afficherLogo();
+    //     // player.character = chooseCharacter();
+    //     // printAttack();
+    //     // while (!gameOver) {
+    //     //     gameOver = genLevel(level);
+    //     //     level = level + 1;
+    //     // }
+    //     // refresh();
+    //     // reset();
+    //     // Screen SR=loadASCII(GAMEOVER,ANSI_RED);
+    //     // if (gameOver){
+    //     //     removePatch(main,main, 0,0);
+    //     //     applyPatch(main,SR,main.height/2-SR.height/2,main.width/2-SR.width/2);
+    //     //     refresh();
+    //     // }
+    // }
 
     
 
