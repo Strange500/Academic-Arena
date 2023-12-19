@@ -17,12 +17,14 @@ class AcademicArena extends Program {
     final String HEART = RESSOURCES_DIR + "/" + "heart.txt";
     final String NUMBERS_DIR = RESSOURCES_DIR + "/" + "numbers";
     final String MOB_DIR = RESSOURCES_DIR + "/" + "mobs";
+    final String BOSS_DIR = RESSOURCES_DIR + "/" + "boss";
     final String PLAYERS_FILE = RESSOURCES_DIR + "/" + "players.csv";
 
     final char[] LIST_EMPTY = new char[]{' ', ' ', ' ', ' ', ' ',' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '　', '⠀'};
     final Screen[] LIST_OPERATOR = new Screen[]{loadASCII(OPERATOR_DIR + "/" + "plus.txt", ANSI_RED), loadASCII(OPERATOR_DIR + "/" + "moins.txt", ANSI_GREEN), loadASCII(OPERATOR_DIR + "/" + "fois.txt", ANSI_YELLOW), loadASCII(OPERATOR_DIR + "/" + "division.txt", ANSI_BLUE)};
     Question[] listQuestion;
     Mob[] listMob ;
+    Mob[] listBoss ;
     Screen main = newScreen(51,250);
     Player player;
 
@@ -41,6 +43,15 @@ class AcademicArena extends Program {
         listMob = new Mob[rowCount(f)-1];
         for (int i = 1; i < rowCount(f); i++) {
             listMob[i-1] = newMob(StringToInt(getCell(f, i, 0)), StringToInt(getCell(f, i, 1)), getOperation(getCell(f, i, 2)), loadASCII(MOB_DIR + "/" + getCell(f, i, 3), getWeaknessColor(getCell(f, i, 2))), 0, 0);
+        }
+
+    }
+
+    void loadBoss() {
+        extensions.CSVFile f = loadCSV(RESSOURCES_DIR + "/" + "boss.csv");
+        listBoss = new Mob[rowCount(f)-1];
+        for (int i = 1; i < rowCount(f); i++) {
+            listBoss[i-1] = newMob(StringToInt(getCell(f, i, 0)), StringToInt(getCell(f, i, 1)), getOperation(getCell(f, i, 2)), loadASCII(BOSS_DIR + "/" + getCell(f, i, 3), getWeaknessColor(getCell(f, i, 2))), 0, 0);
         }
 
     }
@@ -112,7 +123,7 @@ class AcademicArena extends Program {
         drawHorizontalLine(main, main.height-1, ANSI_TEXT_DEFAULT_COLOR);
         drawVerticalLine(main, 0, ANSI_TEXT_DEFAULT_COLOR);
         drawVerticalLine(main, main.width-1, ANSI_TEXT_DEFAULT_COLOR);
-        println(ANSI_BLACK_BG + toString(main));
+        println(toString(main));
     }
 
     String getletterPath(char c) {
@@ -1075,6 +1086,35 @@ class AcademicArena extends Program {
         return gameOver;
     }
 
+    boolean genBoss(int level) {
+        int cpt = 0;
+        boolean gameOver = false;
+        Screen levelScreen = newScreen(9, 55);
+        applyPatch(levelScreen, genText("BOSS", ANSI_BLUE), 2 , 2);
+        applyPatch(main, levelScreen, 0, 0);
+        Mob boss = randomChoice(listBoss);
+        boss.posx= main.width/2 + main.width/4-boss.visuel.width/2;
+        boss.posy = main.height/2-boss.visuel.height/2;
+        applyPatch(main, boss.visuel, main.height/2-boss.visuel.height/2, main.width/2 + main.width/4-boss.visuel.width/2);
+        while (!gameOver && !boss.dead) {
+            updateMobHpBar(boss);
+            updateBattle(2, new Mob[]{boss});
+            print("quelle attaque voulez vous faire ? (+ - * /)");
+            Operation op = selectAttaque();
+            attaquerMob(op, level, boss);
+            updateMobHpBar(boss);
+            updateBattle(2, new Mob[]{boss});
+            if (!boss.dead) {
+                player.hp = player.hp - damageToPlayer(level, boss);
+            }
+            refresh();
+            gameOver = player.hp <= 0;
+            
+        }
+        refresh();
+        return true;
+    }
+
     void drawBorder(Screen screen, String color) {
         drawHorizontalLine(screen, 0, color);
         drawHorizontalLine(screen, screen.height-1, color);
@@ -1157,16 +1197,20 @@ class AcademicArena extends Program {
     void algorithm() {
         loadMob();
         loadQuestion();
+        loadBoss();
         boolean gameOver = false;
         int level = 1;
         playSound("./Music3.wav");
         print("Entrez votre pseudo : ");
         player = newPlayer(readString(), null);
-        //afficherLogo();
+        afficherLogo();
         player.character = chooseCharacter();
         printAttack();
         while (!gameOver) {
             gameOver = genLevel(level);
+            if (!gameOver && level % 3 == 0) {
+                gameOver = genBoss(level);
+            }
             if (!gameOver && questionBonus()) {
                 chooseBonus();
             }
@@ -1179,7 +1223,9 @@ class AcademicArena extends Program {
             removePatch(main,main, 0,0);
             applyPatch(main,SR,main.height/2-SR.height/2,main.width/2-SR.width/2);
             refresh();
+            reset();
         }
+        reset();
     }
 
     void _algorithm() {
