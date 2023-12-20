@@ -1041,15 +1041,15 @@ class AcademicArena extends Program {
         applyPatch(main, saveScreen, 0, 0);
         //return equals(response, q.reponse);
         if(equals(response,q.reponse)){ //Changement ici
-            return equals(response,q.reponse);   
+            return true;   
         }else{
             removePatch(main, main, 0, 0);
-            Screen title2=genText("Dommage",ANSI_RED); //Serait mieux de afficher q.reponse pour que le mec apprends à force non ?
-            applyPatch(main, title2, 2, main.width/2-title.width/2);
+            Screen title2=genText("Dommage",ANSI_RED); 
+            applyPatch(main, title2, main.height/2-title2.height/2, main.width/2-title.width/2);
             refresh();
             delay(3000);
             applyPatch(main,saveScreen,0,0);
-            return equals(response,q.reponse);
+            return false;
         }
    }
 
@@ -1123,7 +1123,7 @@ class AcademicArena extends Program {
             
         }
         refresh();
-        return true;
+        return gameOver;
     }
 
     void drawBorder(Screen screen, String color) {
