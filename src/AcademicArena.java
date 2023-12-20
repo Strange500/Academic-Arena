@@ -1039,7 +1039,18 @@ class AcademicArena extends Program {
         refresh();
         String response = readString();
         applyPatch(main, saveScreen, 0, 0);
-        return equals(response, q.reponse);
+        //return equals(response, q.reponse);
+        if(equals(response,q.reponse)){ //Changement ici
+            return equals(response,q.reponse);   
+        }else{
+            removePatch(main, main, 0, 0);
+            Screen title2=genText("Dommage",ANSI_RED); //Serait mieux de afficher q.reponse pour que le mec apprends à force non ?
+            applyPatch(main, title2, 2, main.width/2-title.width/2);
+            refresh();
+            delay(3000);
+            applyPatch(main,saveScreen,0,0);
+            return equals(response,q.reponse);
+        }
    }
 
 
