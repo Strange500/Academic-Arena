@@ -86,7 +86,10 @@ class AcademicArena extends Program {
             csvTable[i][0] = listScore[i-1].speudo;
             csvTable[i][1] = "" + listScore[i-1].score;
         }
+        saveCSV(csvTable, SCORE_FILE);
     }
+
+    
 
     Question newQuestion(String question, String reponse) {
         Question q = new Question();
