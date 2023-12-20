@@ -2,3 +2,5 @@ hp,atk,faiblesse,visuel
 50,12,addition,test.txt
 50,15,soustraction,dino.txt
 40,15,divison,loup2.txt
+40,15,multiplication,plinplon.txt
+60,10,addition,bossMaria.txt
