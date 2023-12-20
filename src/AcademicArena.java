@@ -19,12 +19,17 @@ class AcademicArena extends Program {
     final String MOB_DIR = RESSOURCES_DIR + "/" + "mobs";
     final String BOSS_DIR = RESSOURCES_DIR + "/" + "boss";
     final String PLAYERS_FILE = RESSOURCES_DIR + "/" + "players.csv";
+    final String SCORE_FILE = RESSOURCES_DIR + "/" + "scores.csv";
+    final String MOBS_FILE = RESSOURCES_DIR + "/" + "mob.csv";
+    final String BONUS_FILE = RESSOURCES_DIR + "/" + "bonus.csv";
+    final String BOSS_FILE = RESSOURCES_DIR + "/" + "boss.csv";
 
     final char[] LIST_EMPTY = new char[]{' ', ' ', ' ', ' ', ' ',' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '　', '⠀'};
     final Screen[] LIST_OPERATOR = new Screen[]{loadASCII(OPERATOR_DIR + "/" + "plus.txt", ANSI_RED), loadASCII(OPERATOR_DIR + "/" + "moins.txt", ANSI_GREEN), loadASCII(OPERATOR_DIR + "/" + "fois.txt", ANSI_YELLOW), loadASCII(OPERATOR_DIR + "/" + "division.txt", ANSI_BLUE)};
     Question[] listQuestion;
     Mob[] listMob ;
     Mob[] listBoss ;
+    Score[] listScore;
     Screen main = newScreen(51,250);
     Player player;
 
@@ -39,7 +44,7 @@ class AcademicArena extends Program {
         return result;
     }
     void loadMob() {
-        extensions.CSVFile f = loadCSV(RESSOURCES_DIR + "/" + "mob.csv");
+        extensions.CSVFile f = loadCSV(MOBS_FILE);
         listMob = new Mob[rowCount(f)-1];
         for (int i = 1; i < rowCount(f); i++) {
             listMob[i-1] = newMob(StringToInt(getCell(f, i, 0)), StringToInt(getCell(f, i, 1)), getOperation(getCell(f, i, 2)), loadASCII(MOB_DIR + "/" + getCell(f, i, 3), getWeaknessColor(getCell(f, i, 2))), 0, 0);
@@ -47,8 +52,16 @@ class AcademicArena extends Program {
 
     }
 
+    void loadScores() {
+        extensions.CSVFile f = loadCSV(SCORE_FILE);
+        listScore = new Score[rowCount(f)-1];
+        for (int i = 1; i < rowCount(f); i++) {
+            listScore[i-1] = newScore(getCell(f, i, 0), StringToInt(getCell(f, i, 1)));
+        }
+    }
+
     void loadBoss() {
-        extensions.CSVFile f = loadCSV(RESSOURCES_DIR + "/" + "boss.csv");
+        extensions.CSVFile f = loadCSV(BOSS_FILE);
         listBoss = new Mob[rowCount(f)-1];
         for (int i = 1; i < rowCount(f); i++) {
             listBoss[i-1] = newMob(StringToInt(getCell(f, i, 0)), StringToInt(getCell(f, i, 1)), getOperation(getCell(f, i, 2)), loadASCII(BOSS_DIR + "/" + getCell(f, i, 3), getWeaknessColor(getCell(f, i, 2))), 0, 0);
@@ -57,12 +70,22 @@ class AcademicArena extends Program {
     }
 
     void loadQuestion() {
-        extensions.CSVFile f = loadCSV(RESSOURCES_DIR + "/" + "bonus.csv");
+        extensions.CSVFile f = loadCSV(BONUS_FILE);
         listQuestion = new Question[rowCount(f)-1];
         for (int i = 1; i < rowCount(f); i++) {
             listQuestion[i-1] = newQuestion(getCell(f, i, 0), getCell(f, i, 1));
         }
 
+    }
+
+     void saveScores() {
+        String[][] csvTable = new String[length(listScore)+1][2];
+        csvTable[0][0] = "speudo";
+        csvTable[0][1] = "score";
+        for (int i = 1; i < length(listScore)+1; i++) {
+            csvTable[i][0] = listScore[i-1].speudo;
+            csvTable[i][1] = "" + listScore[i-1].score;
+        }
     }
 
     Question newQuestion(String question, String reponse) {
@@ -71,6 +94,13 @@ class AcademicArena extends Program {
         q.reponse = reponse;
         return q;
 
+    }
+
+    Score newScore(String speudo, int score) {
+        Score s = new Score();
+        s.speudo = speudo;
+        s.score = score;
+        return s;
     }
 
     String getWeaknessColor(String faiblesse) {
@@ -1204,11 +1234,91 @@ class AcademicArena extends Program {
 
     }
 
+    boolean newPersonnalBestScore(int score, String speudo) {
+        boolean result = true;
+        for (int i = 0; i < length(listScore); i++) {
+            if (listScore[i].score > score && equals(listScore[i].speudo, speudo)) {
+                result = false;
+            }
+        }
+        return result;
+    }
+
+    boolean isNewPlayer(String speudo) {
+        boolean result = true;
+        for (int i = 0; i < length(listScore); i++) {
+            if (equals(listScore[i].speudo, speudo)) {
+                result = false;
+            }
+        }
+        return result;
+    }
+
+    void changePersonnalScore(int score, String speudo) {
+        for (int i = 0; i < length(listScore); i++) {
+            if (equals(listScore[i].speudo, speudo)) {
+                listScore[i].score = score;
+                return;
+            }
+        }
+    }
+
+    void addScore(String pseudo, int score) {
+        Score[] newListScore = new Score[length(listScore) + 1];
+        for (int i = 0; i < length(listScore); i++) {
+            newListScore[i] = listScore[i];
+        }
+        newListScore[length(listScore)] = newScore(pseudo, score);
+        listScore = newListScore; 
+    }
+
+    Screen genLittleText(String text, String color) {
+        Screen result = newScreen(1, length(text));
+        for (int i = 0; i < length(text); i++) {
+            result.screen[0][i] = newPixel(charAt(text, i), color);
+        }
+        return result;
+    }
+
+    void printScoreTab() {
+        Screen scoreTab = newScreen(main.height, main.width/2 + main.width/4);
+        Screen title = genText("Score", ANSI_WHITE);    
+        Screen text;
+        Screen score;
+        for (int i = 0; i < length(listScore); i++) {
+            text = genLittleText(listScore[i].speudo, ANSI_BLUE);
+            score = genLittleText(listScore[i].score + "", ANSI_RED);
+            applyPatch(scoreTab, text, title.height + 3 + 2 * i, scoreTab.width/2 - 20);
+            applyPatch(scoreTab, score, title.height + 3 + 2 * i , scoreTab.width/2 + 20);
+            drawHorizontalLine(scoreTab, title.height + 3 + 2 * i + 1);
+        }
+        drawBorder(scoreTab, ANSI_WHITE);
+        applyPatch(scoreTab, title, 2, scoreTab.width/2 - title.width/2);
+        applyPatch(main, scoreTab, 2, main.width/2 - scoreTab.width/2);
+        refresh();
+
+    }
+
+    void sortScore() {
+        Score temp;
+        for (int i = 0; i < length(listScore); i++) {
+            for (int j = 0; j < length(listScore) - 1; j++) {
+                if (listScore[j].score < listScore[j+1].score) {
+                    temp = listScore[j];
+                    listScore[j] = listScore[j+1];
+                    listScore[j+1] = temp;
+                }
+            }
+        }
+    }
+
+   
 
     void algorithm() {
         loadMob();
         loadQuestion();
         loadBoss();
+        loadScores();
         boolean gameOver = false;
         int level = 1;
         playSound("./Music3.wav");
@@ -1236,10 +1346,34 @@ class AcademicArena extends Program {
             refresh();
             reset();
         }
+        printScoreTab();
+        readString();
+        if (isNewPlayer(player.speudo)) {
+            addScore(player.speudo, level);
+            println("1");
+            printScoreTab();
+            readString();
+        }
+        else if (newPersonnalBestScore(level, player.speudo)) {
+            changePersonnalScore(level, player.speudo);
+            println("2");
+            printScoreTab();
+            readString();
+        }
+        sortScore();
+        printScoreTab();
+        saveScores();
         reset();
     }
 
     void _algorithm() {
+        loadScores();
+        printScoreTab();
+        readString();
+        addScore("bonoujour", 55);
+        printScoreTab();
+        readString();
+        saveScores();
 
         // loadMob();
         // boolean gameOver = false;
