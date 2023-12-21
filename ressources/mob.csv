@@ -3,3 +3,6 @@ hp,atk,faiblesse,visuel
 5,10,soustraction,chat.txt
 10,10,multiplication,skeleton.txt
 20,10,division,loup.txt
+15,12,addition,aligator.txt
+10,12,soustraction,snake.txt
+22,3,addition,dimetrodon.txt

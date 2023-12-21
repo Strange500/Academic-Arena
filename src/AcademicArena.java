@@ -1068,7 +1068,7 @@ class AcademicArena extends Program {
         Screen text = fitText(main, q.question);
         Screen title = genText("Question Bonus", ANSI_WHITE);
         applyPatch(main, title, 2, main.width/2-title.width/2);
-        applyPatch(main, text, main.height/2-text.height/2, main.width/2-text.width/2);
+        applyPatch(main, text, main.height/2-text.height/2, main.width/3-text.width/2);
         refresh();
         String response = readString();
         applyPatch(main, saveScreen, 0, 0);
