@@ -1349,19 +1349,11 @@ class AcademicArena extends Program {
             refresh();
             reset();
         }
-        printScoreTab();
-        readString();
         if (isNewPlayer(player.speudo)) {
             addScore(player.speudo, level);
-            println("1");
-            printScoreTab();
-            readString();
         }
         else if (newPersonnalBestScore(level, player.speudo)) {
             changePersonnalScore(level, player.speudo);
-            println("2");
-            printScoreTab();
-            readString();
         }
         sortScore();
         printScoreTab();
