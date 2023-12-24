@@ -1,6 +1,6 @@
 class Player {
     int hp;
     int atk;  
-    String speudo;  
+    String pseudo;  
     Screen character;
 }

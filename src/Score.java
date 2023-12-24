@@ -1,4 +1,4 @@
 class Score {
-    String speudo;
+    String pseudo;
     int score;
 }
