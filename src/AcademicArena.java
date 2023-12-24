@@ -1031,18 +1031,33 @@ class AcademicArena extends Program {
 
     }
 
-     Screen fitText(Screen screen, String text) {
-        if (length(text)*8 < screen.width) {
-            return genText(text, ANSI_TEXT_DEFAULT_COLOR);
+     Screen fitText(Screen screen, String chaine) {
+        if (length(chaine)*8 < screen.width) {
+            return genText(chaine, ANSI_TEXT_DEFAULT_COLOR);
         }
         else {
-            int cut_index = indexNearSpace(text, ((length(text)*8)%screen.width)%length(text));
-            print(cut_index);
-            Screen p1 = genText(substring(text, 0, cut_index), ANSI_WHITE);
-            Screen p2 = genText(substring(text, cut_index, length(text)), ANSI_WHITE);
-            Screen result = newScreen(p1.height + p2.height, screen.width);
-            applyPatch(result, p1, 0, result.width/2-p1.width/2);
-            applyPatch(result, p2, p1.height, result.width/2-p2.width/2);
+            println("");
+            int cpt = 0;
+            Screen tempSR = newScreen(screen.height, screen.width);
+            Screen result = newScreen(0, 0);
+            int curH = 0;
+            int curW = 0;
+            Screen temp;
+            int base_width = genText("a", ANSI_WHITE).width; 
+            int base_height = genText("a", ANSI_WHITE).height; 
+            while (cpt < length(chaine) ) {
+                temp = genText(charAt(chaine, cpt)+"", ANSI_WHITE);
+                tempSR = deepCopy(result);
+                result = newScreen(curH+base_height, screen.width);
+                applyPatch(result, tempSR, 0, 0);
+                applyPatch(result, temp, curH, curW);
+                curW = curW + temp.width;
+                if (curW > screen.width - base_width) {
+                    curH = curH + temp.height+2;
+                    curW = 0;
+                }
+                cpt = cpt + 1;
+            }
             return result;
         }
         
@@ -1068,7 +1083,7 @@ class AcademicArena extends Program {
         Screen text = fitText(main, q.question);
         Screen title = genText("Question Bonus", ANSI_WHITE);
         applyPatch(main, title, 2, main.width/2-title.width/2);
-        applyPatch(main, text, main.height/2-text.height/2, main.width/3-text.width/2);
+        applyPatch(main, text, main.height/2-text.height/2, main.width/2-text.width/2);
         refresh();
         String response = readString();
         applyPatch(main, saveScreen, 0, 0);
@@ -1324,17 +1339,18 @@ class AcademicArena extends Program {
         loadScores();
         boolean gameOver = false;
         int level = 1;
-        playSound("./Music3.wav");
+        // playSound("./Music3.wav");
         print("Entrez votre pseudo : ");
-        player = newPlayer(readString(), null);
-        afficherLogo();
-        player.character = chooseCharacter();
-        printAttack();
+        //player = newPlayer(readString(), null);
+        player = newPlayer("test", null);
+        // afficherLogo();
+        // player.character = chooseCharacter();
+        // printAttack();
         while (!gameOver) {
-            gameOver = genLevel(level);
-            if (!gameOver && level % 3 == 0) {
-                gameOver = genBoss(level);
-            }
+            //gameOver = genLevel(level);
+            // if (!gameOver && level % 3 == 0) {
+            //     gameOver = genBoss(level);
+            // }
             if (!gameOver && questionBonus()) {
                 chooseBonus();
             }
