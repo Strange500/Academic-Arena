@@ -899,6 +899,84 @@ class AcademicArena extends Program {
         assertEquals(2, count("toto", 'o'));
     } 
 
+    boolean contains(int[] list, int target) {
+        boolean result = false;
+        int cpt = 0;
+        while (cpt < length(list) && !result) {
+            result = list[cpt] == target;
+            cpt = cpt + 1;
+        }
+        return result;
+    }
+
+    void testContains() {
+        int[] list = new int[]{1, 2, 3, 4, 5};
+        assertTrue(contains(list, 1));
+        assertTrue(contains(list, 2));
+        assertTrue(contains(list, 3));
+        assertTrue(contains(list, 4));
+        assertTrue(contains(list, 5));
+        assertFalse(contains(list, 6));
+        assertFalse(contains(list, 7));
+        assertFalse(contains(list, 8));
+        assertFalse(contains(list, 9));
+        assertFalse(contains(list, 10));
+    }
+
+    void reverse(Mob[] list) {
+        int cpt = 0;
+        int last = length(list) - 1;
+        Mob temp;
+        while (cpt < length(list)/2) {
+            temp = list[cpt];
+            list[cpt] = list[last];
+            list[last] = temp;
+            cpt = cpt + 1;
+            last = last - 1;
+        }
+    }
+
+    void testReverse() {
+        Mob[] list = new Mob[]{newMob(10, 12, Operation.ADDITION, newScreen(10, 10), 0, 10), newMob(10, 12, Operation.MULTIPLICATION, newScreen(10, 10), 0, 10), newMob(10, 12, Operation.DIVISION, newScreen(10, 10), 0, 10), newMob(10, 12, Operation.SOUSTRACTION, newScreen(10, 10), 0, 10)};
+        reverse(list);
+        assertEquals(toString(list[0]), toString(newMob(10, 12, Operation.SOUSTRACTION, newScreen(10, 10), 0, 10)));
+        assertEquals(toString(list[1]), toString(newMob(10, 12, Operation.DIVISION, newScreen(10, 10), 0, 10)));
+        assertEquals(toString(list[2]), toString(newMob(10, 12, Operation.MULTIPLICATION, newScreen(10, 10), 0, 10)));
+        assertEquals(toString(list[3]), toString(newMob(10, 12, Operation.ADDITION, newScreen(10, 10), 0, 10)));
+    }
+
+
+
+    void reverse(Screen[] list) {
+        int cpt = 0;
+        int last = length(list) - 1;
+        Screen temp;
+        while (cpt < length(list)/2) {
+            temp = list[cpt];
+            list[cpt] = list[last];
+            list[last] = temp;
+            cpt = cpt + 1;
+            last = last - 1;
+        }
+    }
+
+    void testReverseScreen() {
+        Screen[] list = new Screen[]{newScreen(10, 10), newScreen(10, 10), newScreen(10, 10), newScreen(10, 10)};
+        reverse(list);
+        assertEquals(toString(list[0]), toString(newScreen(10, 10)));
+        assertEquals(toString(list[1]), toString(newScreen(10, 10)));
+        assertEquals(toString(list[2]), toString(newScreen(10, 10)));
+        assertEquals(toString(list[3]), toString(newScreen(10, 10)));
+    }
+
+    int chooseNumber(int min, int max) {
+        int result = 0;
+        do {
+            result = readInt();
+        } while (result < min || result > max);
+        return result;
+    }
+
 
 
     // Screen manipulation functions
@@ -1577,21 +1655,44 @@ class AcademicArena extends Program {
         }
     }
 
-
-
-
-    /////////////////////////////
-
-    boolean contains(int[] list, int target) {
-        boolean result = false;
-        int cpt = 0;
-        while (cpt < length(list) && !result) {
-            result = list[cpt] == target;
-            cpt = cpt + 1;
+    Screen genLittleText(String text, String color) {
+        Screen result = newScreen(1, length(text));
+        for (int i = 0; i < length(text); i++) {
+            result.screen[0][i] = newPixel(charAt(text, i), color);
         }
         return result;
     }
 
+
+    /////////////////////////////
+    //// Operation funtions /////
+    /////////////////////////////
+
+    Operation getOperation(String operation) {
+        if (equals(operation, "addition")) {
+            return Operation.ADDITION;
+        }
+        else if (equals(operation, "multiplication")) {
+            return Operation.MULTIPLICATION;
+        }
+        else if (equals(operation, "division")) {
+            return Operation.DIVISION;
+        }
+        else if (equals(operation, "soustraction")) {
+            return Operation.SOUSTRACTION;
+        }
+        else {
+            return Operation.ADDITION;
+        }
+        
+    }
+
+    void testGetOperation() {
+        assertEquals(getOperation("addition"), Operation.ADDITION);
+        assertEquals(getOperation("multiplication"), Operation.MULTIPLICATION);
+        assertEquals(getOperation("division"), Operation.DIVISION);
+        assertEquals(getOperation("soustraction"), Operation.SOUSTRACTION);
+    }
 
     String getWeaknessColor(String faiblesse) {
         String result = "";
@@ -1615,88 +1716,18 @@ class AcademicArena extends Program {
         return result;
     }
 
-    int getPlayerBestScore(String pseudo) {
-        extensions.CSVFile f = loadCSV(RESSOURCES_DIR + "/" + "scores.csv");
-        int result = 0;
-        int cpt = 1;
-        while (cpt < rowCount(f) && result == 0) {
-            if (equals(getCell(f, cpt, 0), pseudo)) {
-                result = StringToInt(getCell(f, cpt, 1));
-            }
-            cpt = cpt + 1;
-        }
-        return result;
-
-    }
-    Player[] getPlayers() {
-        extensions.CSVFile f = loadCSV(RESSOURCES_DIR + "/" + "scores.csv");
-        Player[] table = new Player[rowCount(f)-1];
-        for (int i = 1; i < rowCount(f); i++) {
-            table[i-1] = newPlayer(getCell(f, i, 0), null);
-        }
-        return table;
-
+    void testGetWeaknessColor() {
+        assertEquals(getWeaknessColor("addition"), ANSI_RED);
+        assertEquals(getWeaknessColor("multiplication"), ANSI_YELLOW);
+        assertEquals(getWeaknessColor("division"), ANSI_BLUE);
+        assertEquals(getWeaknessColor("soustraction"), ANSI_GREEN);
     }
 
-    void refresh() {
-        drawHorizontalLine(main, 0, ANSI_TEXT_DEFAULT_COLOR);
-        drawHorizontalLine(main, main.height-1, ANSI_TEXT_DEFAULT_COLOR);
-        drawVerticalLine(main, 0, ANSI_TEXT_DEFAULT_COLOR);
-        drawVerticalLine(main, main.width-1, ANSI_TEXT_DEFAULT_COLOR);
-        println(toString(main));
-    }
 
-    String getletterPath(char c) {
-        if (c == ' ') {
-            return RESSOURCES_DIR + "/letters/" + "space" + ".txt";
-        }
-        return RESSOURCES_DIR + "/letters/" + c + ".txt"; 
-    }
 
-    Operation getOperation(String operation) {
-        if (equals(operation, "addition")) {
-            return Operation.ADDITION;
-        }
-        else if (equals(operation, "multiplication")) {
-            return Operation.MULTIPLICATION;
-        }
-        else if (equals(operation, "division")) {
-            return Operation.DIVISION;
-        }
-        else if (equals(operation, "soustraction")) {
-            return Operation.SOUSTRACTION;
-        }
-        else {
-            return Operation.ADDITION;
-        }
-        
-    }
-
-    void reverse(Mob[] list) {
-        int cpt = 0;
-        int last = length(list) - 1;
-        Mob temp;
-        while (cpt < length(list)/2) {
-            temp = list[cpt];
-            list[cpt] = list[last];
-            list[last] = temp;
-            cpt = cpt + 1;
-            last = last - 1;
-        }
-    }
-
-    void reverse(Screen[] list) {
-        int cpt = 0;
-        int last = length(list) - 1;
-        Screen temp;
-        while (cpt < length(list)/2) {
-            temp = list[cpt];
-            list[cpt] = list[last];
-            list[last] = temp;
-            cpt = cpt + 1;
-            last = last - 1;
-        }
-    }
+    /////////////////////////////////////
+    //////     game functions       /////
+    /////////////////////////////////////
 
     Screen mobEntrance(Mob[] mobs) {
         int gap = 5;
@@ -1754,15 +1785,7 @@ class AcademicArena extends Program {
         }
         return result;
     }
-
-    int chooseNumber(int min, int max) {
-        int result = 0;
-        do {
-            result = readInt();
-        } while (result < min || result > max);
-        return result;
-    }
-
+    
     void updateMobHpBar(Mob mob) {       
         Screen hpBar = newScreen(1, mob.hp*20/mob.initialHp);
 
@@ -1823,23 +1846,6 @@ class AcademicArena extends Program {
         applyPatch(hp, getNumber(player.hp, color), 2, text.width + 2);
         applyPatch(main, hp, main.height - hp.height, 50);
         
-    }
-
-    int damageToPlayer(int level, Mob mob) {
-        playSound("./Son/hitHurt.wav");
-        return (int) (random()*mob.atk*level) * 3;
-    }
-
-    int damageDoneToMob(Mob mob, Operation op) {
-        if (op == mob.faiblesse) {
-            print("Coup critique ! ");
-            playSound("./Son/hitToMob.wav");
-            return player.atk * 4000;
-        }
-        else {
-            playSound("./Son/hitToMob.wav");
-            return player.atk;
-        }
     }
 
     void printAttack() {
@@ -2119,6 +2125,50 @@ class AcademicArena extends Program {
 
     }
 
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    int damageToPlayer(int level, Mob mob) {
+        playSound("./Son/hitHurt.wav");
+        return (int) (random()*mob.atk*level) * 3;
+    }
+
+    int damageDoneToMob(Mob mob, Operation op) {
+        if (op == mob.faiblesse) {
+            print("Coup critique ! ");
+            playSound("./Son/hitToMob.wav");
+            return player.atk * 4000;
+        }
+        else {
+            playSound("./Son/hitToMob.wav");
+            return player.atk;
+        }
+    }
+
+
+    ///////////////////////
+    ////  Score funtions //
+    ///////////////////////
+    
+
     boolean newPersonnalBestScore(int score, String pseudo) {
         boolean result = true;
         for (int i = 0; i < length(listScore); i++) {
@@ -2157,13 +2207,7 @@ class AcademicArena extends Program {
         listScore = newListScore; 
     }
 
-    Screen genLittleText(String text, String color) {
-        Screen result = newScreen(1, length(text));
-        for (int i = 0; i < length(text); i++) {
-            result.screen[0][i] = newPixel(charAt(text, i), color);
-        }
-        return result;
-    }
+    
 
     void printScoreTab() {
         Screen scoreTab = newScreen(main.height, main.width/2 + main.width/4);
@@ -2197,6 +2241,13 @@ class AcademicArena extends Program {
         }
     }
 
+    String getletterPath(char c) {
+        if (c == ' ') {
+            return RESSOURCES_DIR + "/letters/" + "space" + ".txt";
+        }
+        return RESSOURCES_DIR + "/letters/" + c + ".txt"; 
+    }
+
     // game events graphics
 
     void genTitleScreen(){
@@ -2222,6 +2273,29 @@ class AcademicArena extends Program {
             moveBottom(main, partB, posy_B + i, posX_B);
             refresh();
         }
+    }
+
+    int getPlayerBestScore(String pseudo) {
+        extensions.CSVFile f = loadCSV(RESSOURCES_DIR + "/" + "scores.csv");
+        int result = 0;
+        int cpt = 1;
+        while (cpt < rowCount(f) && result == 0) {
+            if (equals(getCell(f, cpt, 0), pseudo)) {
+                result = StringToInt(getCell(f, cpt, 1));
+            }
+            cpt = cpt + 1;
+        }
+        return result;
+
+    }
+    Player[] getPlayers() {
+        extensions.CSVFile f = loadCSV(RESSOURCES_DIR + "/" + "scores.csv");
+        Player[] table = new Player[rowCount(f)-1];
+        for (int i = 1; i < rowCount(f); i++) {
+            table[i-1] = newPlayer(getCell(f, i, 0), null);
+        }
+        return table;
+
     }
 
     Screen chooseCharacter() {
@@ -2250,6 +2324,13 @@ class AcademicArena extends Program {
     }
 
 
+    void refresh() {
+        drawHorizontalLine(main, 0, ANSI_TEXT_DEFAULT_COLOR);
+        drawHorizontalLine(main, main.height-1, ANSI_TEXT_DEFAULT_COLOR);
+        drawVerticalLine(main, 0, ANSI_TEXT_DEFAULT_COLOR);
+        drawVerticalLine(main, main.width-1, ANSI_TEXT_DEFAULT_COLOR);
+        println(toString(main));
+    }
 
    
 
