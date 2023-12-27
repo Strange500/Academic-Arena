@@ -313,9 +313,9 @@ class AcademicArena extends Program {
             for (int j = 0; j < length(screen.screen, 2); j++) {
                 result = result + toString(screen.screen[i][j]);
             }
-            result = result + '\n' + ANSI_TEXT_DEFAULT_COLOR;
+            result = result + '\n' + ANSI_RESET;
         }
-        return result + ANSI_TEXT_DEFAULT_COLOR;
+        return result + ANSI_RESET;
     }
 
     void testToStringPixel() {
@@ -1389,13 +1389,23 @@ class AcademicArena extends Program {
                 cpt = cpt + 1;
                 cptW = cptW + 1;
             }
-            screen[i][cptW-1].c = screen[i][cptW-1].c + ANSI_TEXT_DEFAULT_COLOR;
+            screen[i][cptW-1].c = screen[i][cptW-1].c + ANSI_RESET;
             cptW = 0;
             cpt = cpt + 1;
         }
         Screen result = newScreen(height, width);
         result.screen = screen;
         return result;
+    }
+
+    void setcolor(Screen screen, String color) {
+        for (int i = 1; i < length(screen.screen, 1); i++) {
+            for (int j = 0; j < length(screen.screen, 2); j++) {
+                Pixel p = screen.screen[i][j];
+                screen.screen[i][j].c = color + p.c;
+            }
+            screen.screen[i][length(screen.screen, 2)-1].c = screen.screen[i][length(screen.screen, 2)-1].c + ANSI_RESET;
+        }
     }
 
 
@@ -2126,25 +2136,6 @@ class AcademicArena extends Program {
     }
 
 
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
 
     int damageToPlayer(int level, Mob mob) {
         playSound("./Son/hitHurt.wav");
@@ -2155,7 +2146,7 @@ class AcademicArena extends Program {
         if (op == mob.faiblesse) {
             print("Coup critique ! ");
             playSound("./Son/hitToMob.wav");
-            return player.atk * 4000;
+            return player.atk * 3;
         }
         else {
             playSound("./Son/hitToMob.wav");
