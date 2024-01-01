@@ -26,6 +26,9 @@ class AcademicArena extends Program {
 
     final char[] LIST_EMPTY = new char[]{' ', ' ', ' ', ' ', ' ',' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '　', '⠀'};
     final Screen[] LIST_OPERATOR = new Screen[]{loadASCII(OPERATOR_DIR + "/" + "plus.txt", ANSI_RED), loadASCII(OPERATOR_DIR + "/" + "moins.txt", ANSI_GREEN), loadASCII(OPERATOR_DIR + "/" + "fois.txt", ANSI_YELLOW), loadASCII(OPERATOR_DIR + "/" + "division.txt", ANSI_BLUE)};
+    final char VERTICAL_LINE = '▐';
+    final char HORIZONTAL_LINE = '▁';
+    
     Question[] listQuestion;
     Mob[] listMob ;
     Mob[] listBoss ;
@@ -1087,6 +1090,23 @@ class AcademicArena extends Program {
         applyPatch(mainScreen, n, h, w);
     }
 
+    void testRemovePatch() {
+        Screen mainScreen = newScreen(2, 2);
+        Screen patch = newScreen(2, 2);
+        patch.screen[0][0] = newPixel('H', "");
+        patch.screen[1][1] = newPixel('Y', "");
+        applyPatch(mainScreen, patch, 0, 0);
+        removePatch(mainScreen, patch, 0, 0);
+        assertEquals(toString(mainScreen.screen[0][0]) + toString(mainScreen.screen[0][1]) + "\n" + ANSI_RESET + toString(mainScreen.screen[1][0]) + toString(mainScreen.screen[1][1]) + "\n" + ANSI_RESET + ANSI_RESET  , toString(mainScreen));
+        mainScreen = newScreen(2, 2);
+        patch = newScreen(2, 2);
+        patch.screen[0][0] = newPixel('H', ANSI_RED);
+        patch.screen[1][1] = newPixel('Y', ANSI_GREEN);
+        applyPatch(mainScreen, patch, 0, 0);
+        removePatch(mainScreen, patch, 0, 0);
+        assertEquals(toString(mainScreen.screen[0][0]) + toString(mainScreen.screen[0][1]) + "\n" + ANSI_RESET + toString(mainScreen.screen[1][0]) + toString(mainScreen.screen[1][1]) + "\n" + ANSI_RESET + ANSI_RESET  , toString(mainScreen));
+    }
+
     /**
      * Removes a patch from the main screen with optional transition effect.
      *
@@ -1128,6 +1148,23 @@ class AcademicArena extends Program {
         applyPatch(mainScreen, patch, curH, curW+1);     
     }
 
+    void testMoveRight() {
+        Screen mainScreen = newScreen(2, 2);
+        Screen patch = newScreen(2, 2);
+        patch.screen[0][0] = newPixel('H', "");
+        patch.screen[1][1] = newPixel('Y', "");
+        applyPatch(mainScreen, patch, 0, 0);
+        moveRight(mainScreen, patch, 0, 0);
+        assertEquals(toString(mainScreen.screen[0][0]) + toString(patch.screen[0][0]) + "\n" + ANSI_RESET + toString(mainScreen.screen[1][0]) + toString(patch.screen[1][0]) + "\n" + ANSI_RESET + ANSI_RESET  , toString(mainScreen));
+        mainScreen = newScreen(2, 2);
+        patch = newScreen(2, 2);
+        patch.screen[0][0] = newPixel('H', ANSI_RED);
+        patch.screen[1][1] = newPixel('Y', ANSI_GREEN);
+        applyPatch(mainScreen, patch, 0, 0);
+        moveRight(mainScreen, patch, 0, 0);
+        assertEquals(toString(mainScreen.screen[0][0]) + toString(patch.screen[0][0]) + "\n" + ANSI_RESET + toString(mainScreen.screen[1][0]) + toString(patch.screen[1][0]) + "\n" + ANSI_RESET + ANSI_RESET  , toString(mainScreen));
+    }
+
     /**
      * Moves the patch to the left on the main screen.
      *
@@ -1139,6 +1176,23 @@ class AcademicArena extends Program {
     void moveLeft(Screen mainScreen, Screen patch, int curH, int curW) {
         removePatch(mainScreen, patch, curH, curW);  
         applyPatch(mainScreen, patch, curH, curW-1);     
+    }
+
+    void testMoveLeft() {
+        Screen mainScreen = newScreen(2, 2);
+        Screen patch = newScreen(2, 2);
+        patch.screen[0][0] = newPixel('H', "");
+        patch.screen[1][1] = newPixel('Y', "");
+        applyPatch(mainScreen, patch, 0, 0);
+        moveLeft(mainScreen, patch, 0, 0);
+        assertEquals(toString(patch.screen[0][1]) + toString(mainScreen.screen[0][1]) + "\n" + ANSI_RESET + toString(patch.screen[1][1]) + toString(mainScreen.screen[1][1]) + "\n" + ANSI_RESET + ANSI_RESET  , toString(mainScreen));
+        mainScreen = newScreen(2, 2);
+        patch = newScreen(2, 2);
+        patch.screen[0][0] = newPixel('H', ANSI_RED);
+        patch.screen[1][1] = newPixel('Y', ANSI_GREEN);
+        applyPatch(mainScreen, patch, 0, 0);
+        moveLeft(mainScreen, patch, 0, 0);
+        assertEquals(toString(patch.screen[0][1]) + toString(mainScreen.screen[0][1]) + "\n" + ANSI_RESET + toString(patch.screen[1][1]) + toString(mainScreen.screen[1][1]) + "\n" + ANSI_RESET + ANSI_RESET  , toString(mainScreen));
     }
 
     /**
@@ -1154,6 +1208,24 @@ class AcademicArena extends Program {
         applyPatch(mainScreen, patch, curH - 1, curW);
     }
 
+    void testMoveTop() {
+        Screen mainScreen = newScreen(2, 2);
+        Screen patch = newScreen(2, 2);
+        patch.screen[0][0] = newPixel('H', "");
+        patch.screen[1][1] = newPixel('Y', "");
+        applyPatch(mainScreen, patch, 0, 0);
+        moveTop(mainScreen, patch, 0, 0);
+        assertEquals(toString(patch.screen[1][0]) + toString(patch.screen[1][1]) + "\n" + ANSI_RESET + toString(mainScreen.screen[1][0]) + toString(mainScreen.screen[1][1]) + "\n" + ANSI_RESET + ANSI_RESET  , toString(mainScreen));
+        mainScreen = newScreen(2, 2);
+        patch = newScreen(2, 2);
+        patch.screen[0][0] = newPixel('H', ANSI_RED);
+        patch.screen[1][1] = newPixel('Y', ANSI_GREEN);
+        applyPatch(mainScreen, patch, 0, 0);
+        moveTop(mainScreen, patch, 0, 0);
+        assertEquals(toString(patch.screen[1][0]) + toString(patch.screen[1][1]) + "\n" + ANSI_RESET + toString(mainScreen.screen[1][0]) + toString(mainScreen.screen[1][1]) + "\n" + ANSI_RESET + ANSI_RESET  , toString(mainScreen));
+    }
+
+    
     /**
      * Moves the patch to the bottom of the screen.
      *
@@ -1168,7 +1240,24 @@ class AcademicArena extends Program {
     }
 
 
+    void testMoveBottom() {
+        Screen mainScreen = newScreen(2, 2);
+        Screen patch = newScreen(2, 2);
+        patch.screen[0][0] = newPixel('H', "");
+        patch.screen[1][1] = newPixel('Y', "");
+        applyPatch(mainScreen, patch, 0, 0);
+        moveBottom(mainScreen, patch, 0, 0);
+        assertEquals(toString(mainScreen.screen[0][0]) + toString(mainScreen.screen[0][1]) + "\n" + ANSI_RESET + toString(patch.screen[0][0]) + toString(patch.screen[0][1]) + "\n" + ANSI_RESET + ANSI_RESET  , toString(mainScreen));
+        mainScreen = newScreen(2, 2);
+        patch = newScreen(2, 2);
+        patch.screen[0][0] = newPixel('H', ANSI_RED);
+        patch.screen[1][1] = newPixel('Y', ANSI_GREEN);
+        applyPatch(mainScreen, patch, 0, 0);
+        moveBottom(mainScreen, patch, 0, 0);
+        assertEquals(toString(mainScreen.screen[0][0]) + toString(mainScreen.screen[0][1]) + "\n" + ANSI_RESET + toString(patch.screen[0][0]) + toString(patch.screen[0][1]) + "\n" + ANSI_RESET + ANSI_RESET  , toString(mainScreen));
+    }
 
+    
     /**
      * Moves the patch on the screen from the current position to the target position.
      *
@@ -1232,10 +1321,19 @@ class AcademicArena extends Program {
     void drawVerticalLine(Screen mainScreen, int w, String color) {
         Screen line = newScreen(mainScreen.height, 1);
         for (int i = 1; i < line.height; i++) {
-            line.screen[i][0] = newPixel('▐', color);
+            line.screen[i][0] = newPixel(VERTICAL_LINE, color);
         }
         applyPatch(mainScreen, line, 0, w);
     }
+
+    void testDrawVerticalLine() {
+        Screen mainScreen = newScreen(2, 2);
+        drawVerticalLine(mainScreen, 0, ANSI_RED);
+        assertEquals(toString(mainScreen.screen[0][0]) + toString(mainScreen.screen[0][1]) + "\n" + ANSI_RESET + toString(newPixel(VERTICAL_LINE, ANSI_RED)) + toString(mainScreen.screen[1][1]) + "\n" + ANSI_RESET + ANSI_RESET  , toString(mainScreen));
+        mainScreen = newScreen(2, 2);
+        drawVerticalLine(mainScreen, 0, ANSI_GREEN);
+        assertEquals(toString(mainScreen.screen[0][0]) + toString(mainScreen.screen[0][1]) + "\n" + ANSI_RESET + toString(newPixel(VERTICAL_LINE, ANSI_GREEN)) + toString(mainScreen.screen[1][1]) + "\n" + ANSI_RESET + ANSI_RESET  , toString(mainScreen));
+    }      
 
     /**
      * Draws a vertical line on the given screen.
@@ -1246,9 +1344,18 @@ class AcademicArena extends Program {
     void drawVerticalLine(Screen mainScreen, int w) {
         Screen line = newScreen(mainScreen.height, 1);
         for (int i = 1; i < line.height; i++) {
-            line.screen[i][0] = newPixel('▐', "");
+            line.screen[i][0] = newPixel(VERTICAL_LINE, "");
         }
         applyPatch(mainScreen, line, 0, w);
+    }
+
+    void testDrawVerticalLine2() {
+        Screen mainScreen = newScreen(2, 2);
+        drawVerticalLine(mainScreen, 0);
+        assertEquals(toString(mainScreen.screen[0][0]) + toString(mainScreen.screen[0][1]) + "\n" + ANSI_RESET + toString(newPixel(VERTICAL_LINE, "")) + toString(mainScreen.screen[1][1]) + "\n" + ANSI_RESET + ANSI_RESET  , toString(mainScreen));
+        mainScreen = newScreen(2, 2);
+        drawVerticalLine(mainScreen, 0);
+        assertEquals(toString(mainScreen.screen[0][0]) + toString(mainScreen.screen[0][1]) + "\n" + ANSI_RESET + toString(newPixel(VERTICAL_LINE, "")) + toString(mainScreen.screen[1][1]) + "\n" + ANSI_RESET + ANSI_RESET  , toString(mainScreen));
     }
 
     /**
@@ -1261,9 +1368,18 @@ class AcademicArena extends Program {
     void drawHorizontalLine(Screen mainScreen, int h, String color) {
         Screen line = newScreen(1, mainScreen.width);
         for (int i = 0; i < line.width; i++) {
-            line.screen[0][i] = newPixel('▁', color);
+            line.screen[0][i] = newPixel(HORIZONTAL_LINE, color);
         }
         applyPatch(mainScreen, line, h, 0);
+    }
+
+    void testDrawHorizontalLine() {
+        Screen mainScreen = newScreen(2, 2);
+        drawHorizontalLine(mainScreen, 0, ANSI_RED);
+        assertEquals(toString(mainScreen.screen[0][0]) + toString(newPixel('▁', ANSI_RED)) + "\n" + ANSI_RESET + toString(mainScreen.screen[1][0]) + toString(mainScreen.screen[1][1]) + "\n" + ANSI_RESET + ANSI_RESET  , toString(mainScreen));
+        mainScreen = newScreen(2, 2);
+        drawHorizontalLine(mainScreen, 0, ANSI_GREEN);
+        assertEquals(toString(mainScreen.screen[0][0]) + toString(newPixel('▁', ANSI_GREEN)) + "\n" + ANSI_RESET + toString(mainScreen.screen[1][0]) + toString(mainScreen.screen[1][1]) + "\n" + ANSI_RESET + ANSI_RESET  , toString(mainScreen));
     }
 
     /**
@@ -1275,9 +1391,18 @@ class AcademicArena extends Program {
     void drawHorizontalLine(Screen mainScreen, int h) {
         Screen line = newScreen(1, mainScreen.width);
         for (int i = 0; i < line.width; i++) {
-            line.screen[0][i] = newPixel('▁', "");
+            line.screen[0][i] = newPixel(HORIZONTAL_LINE, "");
         }
         applyPatch(mainScreen, line, h, 0);
+    }
+
+    void testDrawHorizontalLine2() {
+        Screen mainScreen = newScreen(2, 2);
+        drawHorizontalLine(mainScreen, 0);
+        assertEquals(toString(newPixel(HORIZONTAL_LINE, "")) + toString(newPixel(HORIZONTAL_LINE, "")) +  "\n" + ANSI_RESET + toString(mainScreen.screen[1][0]) + toString(mainScreen.screen[1][1]) + "\n" + ANSI_RESET + ANSI_RESET  , toString(mainScreen));
+        mainScreen = newScreen(2, 2);
+        drawHorizontalLine(mainScreen, 0);
+        assertEquals(toString(newPixel(HORIZONTAL_LINE, "")) + toString(newPixel(HORIZONTAL_LINE, "")) +"\n" + ANSI_RESET + toString(mainScreen.screen[1][0]) + toString(mainScreen.screen[1][1]) + "\n" + ANSI_RESET + ANSI_RESET  , toString(mainScreen));
     }
 
     /**
@@ -1292,6 +1417,8 @@ class AcademicArena extends Program {
         drawVerticalLine(screen, 0, color);
         drawVerticalLine(screen, screen.width-1, color);
     }
+
+    
 
     // screen calculation functions
 
