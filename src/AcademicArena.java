@@ -1438,6 +1438,25 @@ class AcademicArena extends Program {
         return result;
     }
 
+    void testSumWidth() {
+        Screen[] screens = new Screen[]{newScreen(10, 10), newScreen(10, 10), newScreen(10, 10), newScreen(10, 10)};
+        assertEquals(40, sumWidth(screens));
+        screens = new Screen[]{newScreen(10, 10), newScreen(10, 10), newScreen(10, 10), newScreen(10, 10), null};
+        assertEquals(40, sumWidth(screens));
+        screens = new Screen[]{newScreen(10, 10), newScreen(10, 10), newScreen(10, 10), newScreen(10, 10), null, null};
+        assertEquals(40, sumWidth(screens));
+        screens = new Screen[]{newScreen(10, 10), newScreen(10, 10), newScreen(10, 10), newScreen(10, 10), null, null, null};
+        assertEquals(40, sumWidth(screens));
+        screens = new Screen[]{newScreen(10, 10), newScreen(10, 10), newScreen(10, 10), newScreen(10, 10), null, null, null, null};
+        assertEquals(40, sumWidth(screens));
+        screens = new Screen[]{newScreen(10, 10), newScreen(10, 10), newScreen(10, 10), newScreen(10, 10), null, null, null, null, null};
+        assertEquals(40, sumWidth(screens));
+        screens = new Screen[]{newScreen(10, 10), newScreen(10, 10), newScreen(10, 10), newScreen(10, 10), null, null, null, null, null, null};
+        assertEquals(40, sumWidth(screens));
+        screens = new Screen[]{null, newScreen(10, 10), newScreen(10, 10), newScreen(10, 10), newScreen(10, 10), null, null, null, null, null, null, null};
+        assertEquals(40, sumWidth(screens));
+    }
+
     /**
      * Calculates the sum of the widths of the screens. stop at stop index
      *
@@ -1453,6 +1472,23 @@ class AcademicArena extends Program {
             }
         }
         return result;
+    }
+
+    void testSumWidth2() {
+        Screen[] screens = new Screen[]{newScreen(10, 10), newScreen(10, 10), newScreen(10, 10), newScreen(10, 10)};
+        assertEquals(20, sumWidth(screens, 2));
+        screens = new Screen[]{newScreen(10, 10), newScreen(10, 10), newScreen(10, 10), newScreen(10, 10), null};
+        assertEquals(20, sumWidth(screens, 2));
+        screens = new Screen[]{newScreen(10, 10), newScreen(10, 10), newScreen(10, 10), newScreen(10, 10), null, null};
+        assertEquals(20, sumWidth(screens, 2));
+        screens = new Screen[]{newScreen(10, 10), newScreen(10, 10), newScreen(10, 10), newScreen(10, 10), null, null, null};
+        assertEquals(20, sumWidth(screens, 2));
+        screens = new Screen[]{newScreen(10, 10), newScreen(10, 10), null, null, null, null, null, null};
+        assertEquals(20, sumWidth(screens, 2));
+        screens = new Screen[]{newScreen(10, 10), null, null, null, null, null, null, null, null};
+        assertEquals(10, sumWidth(screens, 1));
+        screens = new Screen[]{null, null, null, null, null, null, null, null, null, null};
+        assertEquals(0, sumWidth(screens, 0));
     }
 
     /**
@@ -1471,6 +1507,19 @@ class AcademicArena extends Program {
         return result;
     }
 
+    void testSumHeight() {
+        Screen[] screens = new Screen[]{newScreen(10, 10), newScreen(10, 10), newScreen(10, 10), newScreen(10, 10)};
+        assertEquals(40, sumHeight(screens));
+        screens = new Screen[]{newScreen(10, 10), newScreen(10, 10), newScreen(10, 10), newScreen(10, 10), null};
+        assertEquals(40, sumHeight(screens));
+        screens = new Screen[]{newScreen(10, 10), newScreen(10, 10), null, null, null, null};
+        assertEquals(20, sumHeight(screens));
+        screens = new Screen[]{newScreen(10, 10), null, null, null, null, null, null};
+        assertEquals(10, sumHeight(screens));
+        screens = new Screen[]{null, null, null, null, null, null, null, null};
+        assertEquals(0, sumHeight(screens));
+    }
+
     /**
      * Calculates the max of the heights of the screens.
      *
@@ -1487,6 +1536,21 @@ class AcademicArena extends Program {
         return result;
     }
 
+    void testMaxHeight() {
+        Screen[] screens = new Screen[]{newScreen(10, 10), newScreen(10, 10), newScreen(10, 10), newScreen(10, 10)};
+        assertEquals(10, maxHeight(screens));
+        screens = new Screen[]{newScreen(10, 10), newScreen(10, 10), newScreen(10, 10), newScreen(20, 10)};
+        assertEquals(20, maxHeight(screens));
+        screens = new Screen[]{newScreen(10, 10), newScreen(10, 10), newScreen(10, 10), null};
+        assertEquals(10, maxHeight(screens));
+        screens = new Screen[]{newScreen(10, 10), newScreen(10, 10), null, null};
+        assertEquals(10, maxHeight(screens));
+        screens = new Screen[]{newScreen(10, 10), null, null, null};
+        assertEquals(10, maxHeight(screens));
+        screens = new Screen[]{null, null, null, null};
+        assertEquals(0, maxHeight(screens));
+    }
+
     /**
      * Calculates the max of the widths of the screens.
      *
@@ -1501,6 +1565,21 @@ class AcademicArena extends Program {
             }
         }
         return result;
+    }
+
+    void testMaxWidth() {
+        Screen[] screens = new Screen[]{newScreen(10, 10), newScreen(10, 10), newScreen(10, 20), newScreen(10, 10)};
+        assertEquals(20, maxWidth(screens));
+        screens = new Screen[]{newScreen(10, 10), newScreen(10, 10), newScreen(10, 20), newScreen(10, 10), null};
+        assertEquals(20, maxWidth(screens));
+        screens = new Screen[]{newScreen(10, 10), newScreen(10, 10), newScreen(10, 20), null, null};
+        assertEquals(20, maxWidth(screens));
+        screens = new Screen[]{newScreen(10, 10), newScreen(10, 10), null, null, null};
+        assertEquals(10, maxWidth(screens));
+        screens = new Screen[]{newScreen(10, 10), null, null, null, null};
+        assertEquals(10, maxWidth(screens));
+        screens = new Screen[]{null, null, null, null, null};
+        assertEquals(0, maxWidth(screens));
     }
     // screen creation/conversion functions
 
