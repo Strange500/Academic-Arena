@@ -227,11 +227,11 @@ class AcademicArena extends Program {
         Screen sr = newScreen(2, 2);
         assertEquals(2, sr.height);
         assertEquals(2, sr.width);
-        assertEquals(toString(newPixelEmpty()) + toString(newPixelEmpty()) + "\n" +  ANSI_TEXT_DEFAULT_COLOR + toString(newPixelEmpty()) + toString(newPixelEmpty()) + "\n" + ANSI_TEXT_DEFAULT_COLOR + ANSI_TEXT_DEFAULT_COLOR  , toString(sr));
+        assertEquals(toString(newPixelEmpty()) + toString(newPixelEmpty()) + "\n" +  ANSI_RESET + toString(newPixelEmpty()) + toString(newPixelEmpty()) + "\n" + ANSI_RESET + ANSI_RESET  , toString(sr));
         sr = newScreen(3, 3);
         assertEquals(3, sr.height);
         assertEquals(3, sr.width);
-        assertEquals(toString(newPixelEmpty()) + toString(newPixelEmpty()) + toString(newPixelEmpty()) + "\n" + ANSI_TEXT_DEFAULT_COLOR + toString(newPixelEmpty()) + toString(newPixelEmpty()) + toString(newPixelEmpty()) + "\n" + ANSI_TEXT_DEFAULT_COLOR + toString(newPixelEmpty()) + toString(newPixelEmpty()) + toString(newPixelEmpty()) + "\n" + ANSI_TEXT_DEFAULT_COLOR + ANSI_TEXT_DEFAULT_COLOR  , toString(sr));
+        assertEquals(toString(newPixelEmpty()) + toString(newPixelEmpty()) + toString(newPixelEmpty()) + "\n" + ANSI_RESET + toString(newPixelEmpty()) + toString(newPixelEmpty()) + toString(newPixelEmpty()) + "\n" + ANSI_RESET + toString(newPixelEmpty()) + toString(newPixelEmpty()) + toString(newPixelEmpty()) + "\n" + ANSI_RESET + ANSI_RESET  , toString(sr));
     }
 
     void testNewMob() {
@@ -341,10 +341,10 @@ class AcademicArena extends Program {
         Screen sr = newScreen(2, 2);
         sr.screen[0][0] = newPixel('H', "");
         sr.screen[1][1] = newPixel('Y', "");
-        assertEquals(toString(sr.screen[0][0]) + toString(sr.screen[0][1]) + "\n" + ANSI_TEXT_DEFAULT_COLOR + toString(sr.screen[1][0]) + toString(sr.screen[1][1]) + "\n" + ANSI_TEXT_DEFAULT_COLOR + ANSI_TEXT_DEFAULT_COLOR  , toString(sr));
+        assertEquals(toString(sr.screen[0][0]) + toString(sr.screen[0][1]) + "\n" + ANSI_RESET + toString(sr.screen[1][0]) + toString(sr.screen[1][1]) + "\n" + ANSI_RESET + ANSI_RESET  , toString(sr));
         sr.screen[0][0] = newPixel('H', ANSI_RED);
         sr.screen[1][1] = newPixel('Y', ANSI_GREEN);
-        assertEquals(toString(sr.screen[0][0]) + toString(sr.screen[0][1]) + "\n" + ANSI_TEXT_DEFAULT_COLOR + toString(sr.screen[1][0]) + toString(sr.screen[1][1]) + "\n" + ANSI_TEXT_DEFAULT_COLOR + ANSI_TEXT_DEFAULT_COLOR  , toString(sr));
+        assertEquals(toString(sr.screen[0][0]) + toString(sr.screen[0][1]) + "\n" + ANSI_RESET + toString(sr.screen[1][0]) + toString(sr.screen[1][1]) + "\n" + ANSI_RESET + ANSI_RESET  , toString(sr));
     }
 
     void testToStringMob() {
@@ -1014,6 +1014,21 @@ class AcademicArena extends Program {
             
         }
 
+    }
+
+    void testApplyPatch() {
+        Screen mainScreen = newScreen(2, 2);
+        Screen patch = newScreen(2, 2);
+        patch.screen[0][0] = newPixel('H', "");
+        patch.screen[1][1] = newPixel('Y', "");
+        applyPatch(mainScreen, patch, 0, 0);
+        assertEquals(toString(mainScreen.screen[0][0]) + toString(mainScreen.screen[0][1]) + "\n" + ANSI_RESET + toString(mainScreen.screen[1][0]) + toString(mainScreen.screen[1][1]) + "\n" + ANSI_RESET + ANSI_RESET  , toString(mainScreen));
+        mainScreen = newScreen(2, 2);
+        patch = newScreen(2, 2);
+        patch.screen[0][0] = newPixel('H', ANSI_RED);
+        patch.screen[1][1] = newPixel('Y', ANSI_GREEN);
+        applyPatch(mainScreen, patch, 0, 0);
+        assertEquals(toString(mainScreen.screen[0][0]) + toString(mainScreen.screen[0][1]) + "\n" + ANSI_RESET + toString(mainScreen.screen[1][0]) + toString(mainScreen.screen[1][1]) + "\n" + ANSI_RESET + ANSI_RESET  , toString(mainScreen));
     }
 
     /**
@@ -2325,7 +2340,7 @@ class AcademicArena extends Program {
 
    
 
-    void algorithm() {
+    void __algorithm() {
         loadMob();
         loadQuestion();
         loadBoss();
