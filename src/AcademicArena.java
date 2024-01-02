@@ -1788,6 +1788,13 @@ class AcademicArena extends Program {
         return result;
     }
 
+    void testGetOpScreen() {
+        assertEquals(toString(LIST_OPERATOR[0]), toString(getOpScreen(Operation.ADDITION)));
+        assertEquals(toString(LIST_OPERATOR[1]), toString(getOpScreen(Operation.SOUSTRACTION)));
+        assertEquals(toString(LIST_OPERATOR[2]), toString(getOpScreen(Operation.MULTIPLICATION)));
+        assertEquals(toString(LIST_OPERATOR[3]), toString(getOpScreen(Operation.DIVISION)));
+    }
+
     Screen genHorizontalList(Screen[] list, int gap) {
         Screen result = newScreen(maxHeight(list)+2, sumWidth(list) + length(list)*gap);
         int cpt = 0;
@@ -1929,8 +1936,7 @@ class AcademicArena extends Program {
         }
         else {
             return Operation.ADDITION;
-        }
-        
+        }  
     }
 
     void testGetOperation() {
@@ -2031,6 +2037,29 @@ class AcademicArena extends Program {
         }
         return result;
     }
+
+    void testAllDead() {
+        Mob[] list = new Mob[]{new Mob(), new Mob(), new Mob(), new Mob()};
+        list[0].dead = true;
+        list[1].dead = true;
+        list[2].dead = true;
+        list[3].dead = true;
+        assertTrue(allDead(list));
+        list = new Mob[]{new Mob(), new Mob(), new Mob(), new Mob()};
+        list[0].dead = true;
+        list[1].dead = true;
+        list[2].dead = true;
+        assertFalse(allDead(list));
+        list = new Mob[]{new Mob(), new Mob(), new Mob(), new Mob()};
+        list[0].dead = true;
+        list[1].dead = true;
+        assertFalse(allDead(list));
+        list = new Mob[]{new Mob(), new Mob(), new Mob(), new Mob()};
+        list[0].dead = true;
+        assertFalse(allDead(list));
+        list = new Mob[]{new Mob(), new Mob(), new Mob(), new Mob()};
+        assertFalse(allDead(list));
+    }
     
     void updateMobHpBar(Mob mob) {       
         Screen hpBar = newScreen(1, mob.hp*20/mob.initialHp);
@@ -2055,6 +2084,16 @@ class AcademicArena extends Program {
             result[i] = list[i].visuel;
         }
         return result;
+    }
+
+    void testGetMobScreens() {
+        Mob[] list = new Mob[]{new Mob(), new Mob(), new Mob(), new Mob()};
+        list[0].visuel = newScreen(10, 10);
+        list[1].visuel = newScreen(10, 10);
+        list[2].visuel = newScreen(10, 10);
+        list[3].visuel = newScreen(10, 10);
+        Screen[] result = new Screen[]{list[0].visuel, list[1].visuel, list[2].visuel, list[3].visuel};
+        assertArrayEquals(result, getMobScreens(list));
     }
 
     void updateMobBattle(Mob[] lsMob) {
@@ -2349,6 +2388,17 @@ class AcademicArena extends Program {
         return result;
     }
 
+    void testCalculReussi() {
+        assertTrue(calculReussi(1, 1, Operation.ADDITION, 2));
+        assertTrue(calculReussi(1, 1, Operation.SOUSTRACTION, 0));
+        assertTrue(calculReussi(1, 1, Operation.MULTIPLICATION, 1));
+        assertTrue(calculReussi(1, 1, Operation.DIVISION, 1));
+        assertFalse(calculReussi(1, 1, Operation.ADDITION, 3));
+        assertFalse(calculReussi(1, 1, Operation.SOUSTRACTION, 1));
+        assertFalse(calculReussi(1, 1, Operation.MULTIPLICATION, 2));
+        assertFalse(calculReussi(1, 1, Operation.DIVISION, 2));
+    }
+
     void chooseBonus() {
         Screen saveScreen = copy(main);
         Screen text = genText("Choisi un bonus", ANSI_WHITE);
@@ -2397,13 +2447,25 @@ class AcademicArena extends Program {
     
 
     boolean newPersonnalBestScore(int score, String pseudo) {
-        boolean result = true;
+        boolean result = false;
         for (int i = 0; i < length(listScore); i++) {
             if (listScore[i].score > score && equals(listScore[i].pseudo, pseudo)) {
-                result = false;
+                result = true;
             }
         }
         return result;
+    }
+
+    void testNewPersonnalBestScore() {
+        listScore = new Score[]{newScore("a", 1), newScore("b", 2), newScore("c", 3), newScore("d", 4)};
+        assertFalse(newPersonnalBestScore(1, "a"));
+        assertFalse(newPersonnalBestScore(2, "b"));
+        assertFalse(newPersonnalBestScore(3, "c"));
+        assertFalse(newPersonnalBestScore(4, "d"));
+        assertTrue(newPersonnalBestScore(0, "a"));
+        assertTrue(newPersonnalBestScore(1, "b"));
+        assertTrue(newPersonnalBestScore(2, "c"));
+        assertTrue(newPersonnalBestScore(3, "d"));
     }
 
     boolean isNewPlayer(String pseudo) {
@@ -2416,6 +2478,18 @@ class AcademicArena extends Program {
         return result;
     }
 
+    void testIsNewPlayer() {
+        listScore = new Score[]{newScore("a", 1), newScore("b", 2), newScore("c", 3), newScore("d", 4)};
+        assertFalse(isNewPlayer("a"));
+        assertFalse(isNewPlayer("b"));
+        assertFalse(isNewPlayer("c"));
+        assertFalse(isNewPlayer("d"));
+        assertTrue(isNewPlayer("e"));
+        assertTrue(isNewPlayer("f"));
+        assertTrue(isNewPlayer("g"));
+        assertTrue(isNewPlayer("h"));
+    }
+
     void changePersonnalScore(int score, String pseudo) {
         for (int i = 0; i < length(listScore); i++) {
             if (equals(listScore[i].pseudo, pseudo)) {
@@ -2425,6 +2499,18 @@ class AcademicArena extends Program {
         }
     }
 
+    void testChangePersonnalScore() {
+        listScore = new Score[]{newScore("a", 1), newScore("b", 2), newScore("c", 3), newScore("d", 4)};
+        changePersonnalScore(10, "a");
+        changePersonnalScore(20, "b");
+        changePersonnalScore(30, "c");
+        changePersonnalScore(40, "d");
+        assertEquals(listScore[0].score, 10);
+        assertEquals(listScore[1].score, 20);
+        assertEquals(listScore[2].score, 30);
+        assertEquals(listScore[3].score, 40);
+    }
+
     void addScore(String pseudo, int score) {
         Score[] newListScore = new Score[length(listScore) + 1];
         for (int i = 0; i < length(listScore); i++) {
@@ -2432,6 +2518,22 @@ class AcademicArena extends Program {
         }
         newListScore[length(listScore)] = newScore(pseudo, score);
         listScore = newListScore; 
+    }
+
+    void testAddScore() {
+        listScore = new Score[]{newScore("a", 1), newScore("b", 2), newScore("c", 3), newScore("d", 4)};
+        addScore("e", 5);
+        addScore("f", 6);
+        addScore("g", 7);
+        addScore("h", 8);
+        assertEquals(listScore[4].pseudo, "e");
+        assertEquals(listScore[5].pseudo, "f");
+        assertEquals(listScore[6].pseudo, "g");
+        assertEquals(listScore[7].pseudo, "h");
+        assertEquals(listScore[4].score, 5);
+        assertEquals(listScore[5].score, 6);
+        assertEquals(listScore[6].score, 7);
+        assertEquals(listScore[7].score, 8);
     }
 
     
@@ -2466,6 +2568,15 @@ class AcademicArena extends Program {
                 }
             }
         }
+    }
+
+    void testSortScore() {
+        listScore = new Score[]{newScore("a", 1), newScore("b", 2), newScore("c", 3), newScore("d", 4)};
+        sortScore();
+        assertEquals(listScore[0].score, 4);
+        assertEquals(listScore[1].score, 3);
+        assertEquals(listScore[2].score, 2);
+        assertEquals(listScore[3].score, 1);
     }
 
     String getletterPath(char c) {
@@ -2513,8 +2624,8 @@ class AcademicArena extends Program {
             cpt = cpt + 1;
         }
         return result;
-
     }
+
     Player[] getPlayers() {
         extensions.CSVFile f = loadCSV(RESSOURCES_DIR + "/" + "scores.csv");
         Player[] table = new Player[rowCount(f)-1];
@@ -2522,7 +2633,6 @@ class AcademicArena extends Program {
             table[i-1] = newPlayer(getCell(f, i, 0), null);
         }
         return table;
-
     }
 
     Screen chooseCharacter() {
