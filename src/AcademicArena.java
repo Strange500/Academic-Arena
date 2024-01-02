@@ -1418,6 +1418,12 @@ class AcademicArena extends Program {
         drawVerticalLine(screen, screen.width-1, color);
     }
 
+    void testDrawBorder() {
+        Screen screen = newScreen(3, 3);
+        drawBorder(screen, ANSI_RED);
+        assertEquals(toString(EMPTY_PIXEL) + toString(newPixel(HORIZONTAL_LINE, ANSI_RED)) + toString(EMPTY_PIXEL) + "\n" + ANSI_RESET + toString(newPixel(VERTICAL_LINE, ANSI_RED)) + toString(EMPTY_PIXEL) + toString(newPixel(VERTICAL_LINE, ANSI_RED)) + "\n" + ANSI_RESET + toString(newPixel(VERTICAL_LINE, ANSI_RED)) + toString(newPixel(HORIZONTAL_LINE, ANSI_RED)) + toString(newPixel(VERTICAL_LINE, ANSI_RED)) + "\n" + ANSI_RESET + ANSI_RESET  , toString(screen));
+    }
+
     
 
     // screen calculation functions
@@ -1620,13 +1626,22 @@ class AcademicArena extends Program {
     }
 
     void setcolor(Screen screen, String color) {
-        for (int i = 1; i < length(screen.screen, 1); i++) {
+        for (int i = 0; i < length(screen.screen, 1); i++) {
             for (int j = 0; j < length(screen.screen, 2); j++) {
                 Pixel p = screen.screen[i][j];
                 screen.screen[i][j].c = color + p.c;
             }
             screen.screen[i][length(screen.screen, 2)-1].c = screen.screen[i][length(screen.screen, 2)-1].c + ANSI_RESET;
         }
+    }
+
+    void testSetColor() {
+        Screen screen = newScreen(2, 2);
+        screen.screen[0][0] = newPixel('H', "");
+        screen.screen[1][1] = newPixel('Y', "");
+        Screen cp = copy(screen);
+        setcolor(screen, ANSI_RED);
+        assertEquals(toString(newPixel(charAt(cp.screen[0][0].c, length(cp.screen[0][0].c) - 1), ANSI_RED)) + toString(newPixel(charAt(cp.screen[0][1].c, length(cp.screen[0][1].c) - 1), ANSI_RED)) + ANSI_RESET + '\n' + ANSI_RESET + toString(newPixel(charAt(cp.screen[1][0].c, length(cp.screen[1][0].c) - 1), ANSI_RED)) + toString(newPixel(charAt(cp.screen[1][1].c, length(cp.screen[1][1].c) - 1), ANSI_RED)) + ANSI_RESET + '\n' + ANSI_RESET + ANSI_RESET  , toString(screen));
     }
 
 
