@@ -897,33 +897,79 @@ class AcademicArena extends Program {
     }
 
 
+    // /**
+    //  * Returns an int corresponding to the given string.
+    //  * @param text containing only numbers
+    //  * @return int corresponding to the given string
+    //  */
+    // int StringToInt(String text) {
+    //     int result = 0;
+    //     int cpt = 0;
+    //     while (cpt < length(text)) {
+    //         result = result * 10 + charToInt(charAt(text, cpt));
+    //         cpt = cpt + 1;
+    //     }
+    //     return result;
+    // }
+
+    void testStringToInt() {
+        assertEquals(0, stringToInt("0"));
+        assertEquals(1, stringToInt("1"));
+        assertEquals(12, stringToInt("12"));
+        assertEquals(123, stringToInt("123"));
+        assertEquals(1234, stringToInt("1234"));
+        assertEquals(12345, stringToInt("12345"));
+        assertEquals(123456, stringToInt("123456"));
+        assertEquals(1234567, stringToInt("1234567"));
+        assertEquals(12345678, stringToInt("12345678"));
+        assertEquals(123456789, stringToInt("123456789"));
+        assertEquals(-1, stringToInt("-1"));
+        assertEquals(-12, stringToInt("-12"));
+        assertEquals(-123, stringToInt("-123"));
+        assertEquals(-1234, stringToInt("-1234"));
+        assertEquals(-12345, stringToInt("-12345"));
+        assertEquals(-123456, stringToInt("-123456"));
+        assertEquals(-1234567, stringToInt("-1234567"));
+        assertEquals(-12345678, stringToInt("-12345678"));
+        assertEquals(-123456789, stringToInt("-123456789"));
+    }
+
     /**
-     * Returns an int corresponding to the given string.
-     * @param text containing only numbers
-     * @return int corresponding to the given string
+     * Converts a string to an integer, considering the possibility of a negative number.
+     * @param text the string containing numbers, with an optional '-' sign at the beginning
+     * @return the integer represented by the string
      */
     int StringToInt(String text) {
         int result = 0;
-        int cpt = 0;
-        while (cpt < length(text)) {
-            result = result * 10 + charToInt(charAt(text, cpt));
-            cpt = cpt + 1;
+        int sign = 1;
+        int index = 0;
+        
+        if (text.charAt(0) == '-') {
+            sign = -1;
+            index = 1;
         }
-        return result;
+        
+        while (index < length(text)) {
+            char c = charAt(text, index);
+            result = result * 10 + charToInt(c);
+            index = index + 1;
+        }
+        
+        return result * sign;
     }
 
-    void testStringToInt() {
-        assertEquals(0, StringToInt("0"));
-        assertEquals(1, StringToInt("1"));
-        assertEquals(12, StringToInt("12"));
-        assertEquals(123, StringToInt("123"));
-        assertEquals(1234, StringToInt("1234"));
-        assertEquals(12345, StringToInt("12345"));
-        assertEquals(123456, StringToInt("123456"));
-        assertEquals(1234567, StringToInt("1234567"));
-        assertEquals(12345678, StringToInt("12345678"));
-        assertEquals(123456789, StringToInt("123456789"));
-    }
+    // void testStringToInt() {
+    //     assertEquals(0, StringToInt("0"));
+    //     assertEquals(1, StringToInt("1"));
+    //     assertEquals(12, StringToInt("12"));
+    //     assertEquals(123, StringToInt("123"));
+    //     assertEquals(1234, StringToInt("1234"));
+    //     assertEquals(12345, StringToInt("12345"));
+    //     assertEquals(123456, StringToInt("123456"));
+    //     assertEquals(1234567, StringToInt("1234567"));
+    //     assertEquals(12345678, StringToInt("12345678"));
+    //     assertEquals(123456789, StringToInt("123456789"));
+    // }
 
     /**
      * Look into LIST_EMPTY if the given char is empty. 
@@ -1747,8 +1793,13 @@ class AcademicArena extends Program {
      * @return The Screen object representing the number on the screen.
      */
     Screen getNumber(int number, String color) {
-        if (number < 1000 && number > 0) {
-            Screen[] list_nb = new Screen[3];
+        boolean neg = false;
+        if (number < 10000 && number > -10000) {
+            if (number < 0) {
+                number = number * -1;
+                neg = true;
+            }
+            Screen[] list_nb = new Screen[4];
             for (int i = 0; i < length(list_nb); i++) {
                 list_nb[i] = newScreen(0, 0);
             }
@@ -1759,8 +1810,17 @@ class AcademicArena extends Program {
                 list_nb[cpt] = loadASCII(NUMBERS_DIR + "/" + r + ".txt", color);
                 cpt = cpt + 1;
             }
-            Screen number_ASCII = newScreen(list_nb[0].height, list_nb[0].width + list_nb[1].width + list_nb[2].width);
             int withDec = 0;
+            Screen number_ASCII;
+            if (neg) {
+                number_ASCII = newScreen(list_nb[0].height, LIST_OPERATOR[1].width+list_nb[0].width + list_nb[1].width + list_nb[2].width+ list_nb[3].width);
+                applyPatch(number_ASCII, LIST_OPERATOR[1], 0, 0);
+                withDec = LIST_OPERATOR[1].width;
+            }
+            else {
+                number_ASCII = newScreen(list_nb[0].height, list_nb[0].width + list_nb[1].width + list_nb[2].width+ list_nb[3].width);
+                
+            }
             for (int i = length(list_nb) - 1; i >= 0; i--) {
                 applyPatch(number_ASCII, list_nb[i], 0, withDec);
                 withDec = withDec + list_nb[i].width;
@@ -2369,12 +2429,16 @@ class AcademicArena extends Program {
         String response = readString();
         applyPatch(main, saveScreen, 0, 0);
         //return equals(response, q.reponse);
-        if(equals(response,q.reponse)){ //Changement ici
+        if(equals(response,q.reponse)){ 
             return true;   
         }else{
             removePatch(main, main, 0, 0);
             Screen title2=genText("Dommage",ANSI_RED); 
+            Screen goodAnswer = genText("reponse ",ANSI_WHITE);
+            Screen goodAnswer2 = getNumber(StringToInt(q.reponse),ANSI_WHITE);
             applyPatch(main, title2, main.height/2-title2.height/2, main.width/2-title.width/2);
+            applyPatch(main, goodAnswer, main.height/2 + title2.height , main.width/2-goodAnswer.width/2 - goodAnswer2.width/2);
+            applyPatch(main, goodAnswer2, main.height/2 + title2.height , main.width/2 -goodAnswer.width/2 + goodAnswer.width);
             refresh();
             delay(3000);
             applyPatch(main,saveScreen,0,0);
@@ -2764,7 +2828,7 @@ class AcademicArena extends Program {
 
    
 
-    void __algorithm() {
+    void algorithm() {
         loadMob();
         loadQuestion();
         loadBoss();
