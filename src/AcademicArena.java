@@ -1,34 +1,34 @@
 class AcademicArena extends Program {
 
-
-
-    final char EMPTY = ' ';
-    final Pixel EMPTY_PIXEL = newPixelEmpty();
-    final String RESSOURCES_DIR = "ressources";
-    final String GAMEOVER = RESSOURCES_DIR + "/" + "gameOver.txt";
-    final String OPERATOR_DIR = RESSOURCES_DIR + "/" + "operators";
-    final String LOGO_PART_A = RESSOURCES_DIR + "/" + "academic.txt";
-    final String LOGO_PART_B = RESSOURCES_DIR + "/" + "arena.txt";
-    final String PLAYER = RESSOURCES_DIR + "/" + "player.txt";
-    final String PLAYER_2 = RESSOURCES_DIR + "/" + "player2.txt";
-    final String PLAYER_3 = RESSOURCES_DIR + "/" + "player3.txt";
-    final String PLAYER_4 = RESSOURCES_DIR + "/" + "player4.txt";
-    final String SWORD = RESSOURCES_DIR + "/" + "swords.txt";
-    final String HEART = RESSOURCES_DIR + "/" + "heart.txt";
-    final String NUMBERS_DIR = RESSOURCES_DIR + "/" + "numbers";
-    final String MOB_DIR = RESSOURCES_DIR + "/" + "mobs";
-    final String BOSS_DIR = RESSOURCES_DIR + "/" + "boss";
-    final String PLAYERS_FILE = RESSOURCES_DIR + "/" + "players.csv";
-    final String SCORE_FILE = RESSOURCES_DIR + "/" + "scores.csv";
-    final String MOBS_FILE = RESSOURCES_DIR + "/" + "mob.csv";
-    final String BONUS_FILE = RESSOURCES_DIR + "/" + "bonus.csv";
-    final String BOSS_FILE = RESSOURCES_DIR + "/" + "boss.csv";
-
+    final String CONFIG_PATH = "AcademicArena.conf";
+    final char CONFIG_SEPARATOR = '=';
     final char[] LIST_EMPTY = new char[]{' ', ' ', ' ', ' ', ' ',' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '　', '⠀'};
-    final Screen[] LIST_OPERATOR = new Screen[]{loadASCII(OPERATOR_DIR + "/" + "plus.txt", ANSI_RED), loadASCII(OPERATOR_DIR + "/" + "moins.txt", ANSI_GREEN), loadASCII(OPERATOR_DIR + "/" + "fois.txt", ANSI_YELLOW), loadASCII(OPERATOR_DIR + "/" + "division.txt", ANSI_BLUE)};
-    final char VERTICAL_LINE = '▐';
-    final char HORIZONTAL_LINE = '▁';
     
+    final char EMPTY = charAt(getFromConfigFile("EMPTY"), 0);
+    final String RESSOURCES_DIR = getFromConfigFile("RESSOURCES_DIR");
+    final String GAMEOVER = getFromConfigFile("GAMEOVER");
+    final String OPERATOR_DIR = getFromConfigFile("OPERATOR_DIR");
+    final String LOGO_PART_A = getFromConfigFile("LOGO_PART_A");
+    final String LOGO_PART_B = getFromConfigFile("LOGO_PART_B");
+    final String PLAYER = getFromConfigFile("PLAYER");
+    final String PLAYER_2 = getFromConfigFile("PLAYER_2");
+    final String PLAYER_3 = getFromConfigFile("PLAYER_3");
+    final String PLAYER_4 = getFromConfigFile("PLAYER_4");
+    final String SWORD = getFromConfigFile("SWORD");
+    final String HEART = getFromConfigFile("HEART");
+    final String NUMBERS_DIR = getFromConfigFile("NUMBERS_DIR");
+    final String MOB_DIR = getFromConfigFile("MOB_DIR");
+    final String BOSS_DIR = getFromConfigFile("BOSS_DIR");
+    final String PLAYERS_FILE = getFromConfigFile("PLAYERS_FILE");
+    final String SCORE_FILE = getFromConfigFile("SCORE_FILE");
+    final String MOBS_FILE = getFromConfigFile("MOBS_FILE");
+    final String BONUS_FILE = getFromConfigFile("BONUS_FILE");
+    final String BOSS_FILE = getFromConfigFile("BOSS_FILE");
+    final Screen[] LIST_OPERATOR = new Screen[]{loadASCII(getFromConfigFile("PLUS_ASCII"), ANSI_RED), loadASCII(getFromConfigFile("MOINS_ASCII"), ANSI_GREEN), loadASCII(getFromConfigFile("FOIS_ASCII"), ANSI_YELLOW), loadASCII(getFromConfigFile("DIVISION_ASCII"), ANSI_BLUE)};
+    final char VERTICAL_LINE = charAt(getFromConfigFile("VERTICAL_LINE"), 0);
+    final char HORIZONTAL_LINE = charAt(getFromConfigFile("HORIZONTAL_LINE"), 0);
+    
+    final Pixel EMPTY_PIXEL = newPixelEmpty();
     Question[] listQuestion;
     Mob[] listMob ;
     Mob[] listBoss ;
@@ -38,6 +38,99 @@ class AcademicArena extends Program {
     
 
     // function to load ressources
+
+    String getFromConfigFile(String key) {
+        String content = fileAsString(CONFIG_PATH);
+        String result = getValue(content, key);
+        return result;
+
+    }
+
+    String getValue(String config, String key) {
+        String[] lines = split(config, '\n');
+        String result = "";
+        for (int i = 0; i < length(lines); i++) {
+            String start = split(lines[i], CONFIG_SEPARATOR)[0];
+            String value = split(lines[i], CONFIG_SEPARATOR)[1];
+            if (equals(start, key)) {
+                return value;
+            }
+        }
+        return result;
+    }
+
+    void testGetValue() {
+        String config = "key1=value1\nkey2=value2\nkey3=value3\nkey4=value4\nkey5=value5\nkey6=value6\nkey7=value7\nkey8=value8\nkey9=value9\nkey10=value10\nkey11=value11\nkey12=value12\nkey13=value13";
+        assertEquals("value1", getValue(config, "key1"));
+        assertEquals("value2", getValue(config, "key2"));
+        assertEquals("value3", getValue(config, "key3"));
+        assertEquals("value4", getValue(config, "key4"));
+        assertEquals("value5", getValue(config, "key5"));
+        assertEquals("value6", getValue(config, "key6"));
+        assertEquals("value7", getValue(config, "key7"));
+        assertEquals("value8", getValue(config, "key8"));
+        assertEquals("value9", getValue(config, "key9"));
+        assertEquals("value10", getValue(config, "key10"));
+        assertEquals("value11", getValue(config, "key11"));
+        assertEquals("value12", getValue(config, "key12"));
+        assertEquals("value13", getValue(config, "key13"));
+        assertEquals("", getValue(config, "pasdansconfig"));
+    }
+
+    String[] split(String s, char separator) {
+        int nbOccurences = nbOccurences(s, separator);
+        String[] result = new String[nbOccurences + 1];
+        int index = 0;
+        int start = 0;
+        int end = 0;
+        for (int i = 0; i < length(s); i++) {
+            if (charAt(s, i) == separator) {
+                end = i;
+                result[index] = substring(s, start, end);
+                start = end + 1;
+                index = index + 1;
+            }
+        }
+        result[index] = substring(s, start, length(s));
+        return result;
+    }
+
+    void testSplit() {
+        String[] result = split("a,b,c,d", ',');
+        assertEquals("a", result[0]);
+        assertEquals("b", result[1]);
+        assertEquals("c", result[2]);
+        assertEquals("d", result[3]);
+        result = split("a,b,c,d", 'b');
+        assertEquals("a,", result[0]);
+        assertEquals(",c,d", result[1]);
+        result = split("a,b,c,d", 'd');
+        assertEquals("a,b,c,", result[0]);
+        assertEquals("", result[1]);
+        result = split("a,b,c,d", 'a');
+        assertEquals("", result[0]);
+        assertEquals(",b,c,d", result[1]);
+    }
+
+    int nbOccurences(String s, char separator) {
+        int result = 0;
+        for (int i = 0; i < length(s); i++) {
+            if (charAt(s, i) == separator) {
+                result= result + 1;
+            }
+        }
+        return result;
+
+    }
+
+    void testNbOccurences() {
+        assertEquals(3, nbOccurences("a,b,c,d", ','));
+        assertEquals(0, nbOccurences("a,b,c,d", 'e'));
+        assertEquals(1, nbOccurences("a,b,c,d", 'a'));
+        assertEquals(1, nbOccurences("a,b,c,d", 'b'));
+        assertEquals(1, nbOccurences("a,b,c,d", 'c'));
+        assertEquals(1, nbOccurences("a,b,c,d", 'd'));
+    }
 
     
     /**
