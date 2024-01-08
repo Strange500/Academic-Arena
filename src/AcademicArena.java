@@ -2824,7 +2824,7 @@ class AcademicArena extends Program {
         Screen prompt = newScreen(main.height/4, main.width);
         int r;
         Screen[] list_perso = new Screen[]{loadASCII(PLAYER, ANSI_RED), loadASCII(PLAYER_2, ANSI_GREEN), loadASCII(PLAYER_3, ANSI_YELLOW), loadASCII(PLAYER_4, ANSI_BLUE)};
-        Screen choose_ASCII = genText("Choisi ton personnage", "");
+        Screen choose_ASCII = genText("Choisis ton personnage", "");
         applyPatch(choice, choose_ASCII, 3, choice.width/2 - choose_ASCII.width/2);
         prompt = genHorizontalList(list_perso, 20);
         applyPatch(main, choice, 0, 0);
@@ -2854,7 +2854,7 @@ class AcademicArena extends Program {
 
    
 
-    void __algorithm() {
+    void algorithm() {
         loadMob();
         loadQuestion();
         loadBoss();
@@ -2898,7 +2898,7 @@ class AcademicArena extends Program {
         reset();
     }
 
-    void algorithm() {
+    void _algorithm() {
         println(toString(getNumber(0, "")));
         // loadScores();
         // printScoreTab();
