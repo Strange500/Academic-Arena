@@ -56,11 +56,14 @@ class AcademicArena extends Program {
         String[] lines = split(config, '\n');
         String result = "";
         for (int i = 0; i < length(lines); i++) {
-            String start = split(lines[i], CONFIG_SEPARATOR)[0];
-            String value = split(lines[i], CONFIG_SEPARATOR)[1];
-            if (equals(start, key)) {
-                return value;
+                if (!(charAt(lines[i], 0) == '#')) {
+                String start = split(lines[i], CONFIG_SEPARATOR)[0];
+                String value = split(lines[i], CONFIG_SEPARATOR)[1];
+                if (equals(start, key)) {
+                    return value;
+                }
             }
+            
         }
         return result;
     }
@@ -1821,13 +1824,19 @@ class AcademicArena extends Program {
             for (int i = 0; i < length(list_nb); i++) {
                 list_nb[i] = newScreen(0, 0);
             }
-            int cpt = 0;
-            while (number > 0) {
-                int r = number % 10;
-                number = number / 10;
-                list_nb[cpt] = loadASCII(NUMBERS_DIR + "/" + r + ".txt", color);
-                cpt = cpt + 1;
+            if (number == 0) {
+                list_nb[0] = loadASCII(NUMBERS_DIR + "/" + '0' + ".txt", color);
             }
+            else {
+                int cpt = 0;
+                while (number > 0) {
+                    int r = number % 10;
+                    number = number / 10;
+                    list_nb[cpt] = loadASCII(NUMBERS_DIR + "/" + r + ".txt", color);
+                    cpt = cpt + 1;
+                }
+            }
+            
             int withDec = 0;
             Screen number_ASCII;
             if (neg) {
@@ -2851,7 +2860,6 @@ class AcademicArena extends Program {
         moveTo(main, list_perso[r-1], hchoice, wchoice, (main.height/2 - list_perso[r-1].height/2) -5, 20, 4);
         refresh();
         return list_perso[r-1];
-
     }
 
 
@@ -2865,7 +2873,7 @@ class AcademicArena extends Program {
 
    
 
-    void algorithm() {
+    void __algorithm() {
         loadMob();
         loadQuestion();
         loadBoss();
@@ -2909,7 +2917,8 @@ class AcademicArena extends Program {
         reset();
     }
 
-    void _algorithm() {
+    void algorithm() {
+        println(toString(getNumber(0, "")));
         // loadScores();
         // printScoreTab();
         // readString();
@@ -2917,11 +2926,11 @@ class AcademicArena extends Program {
         // printScoreTab();
         // readString();
         // saveScores();
-        Screen[] list = new Screen[]{loadASCII(PLAYER, ANSI_RED), loadASCII(PLAYER_2, ANSI_GREEN), loadASCII(PLAYER_3, ANSI_YELLOW), loadASCII(PLAYER_4, ANSI_BLUE)};
-        applyPatch(main, genHorizontalList(list, 20), 0, 0);
-        refresh();
-        removeHorizontalList(main, list, 20, 0, 0, true, new int[]{1});
-        refresh();
+        // Screen[] list = new Screen[]{loadASCII(PLAYER, ANSI_RED), loadASCII(PLAYER_2, ANSI_GREEN), loadASCII(PLAYER_3, ANSI_YELLOW), loadASCII(PLAYER_4, ANSI_BLUE)};
+        // applyPatch(main, genHorizontalList(list, 20), 0, 0);
+        // refresh();
+        // removeHorizontalList(main, list, 20, 0, 0, true, new int[]{1});
+        // refresh();
         // loadMob();
         // boolean gameOver = false;
         // int level = 1;
