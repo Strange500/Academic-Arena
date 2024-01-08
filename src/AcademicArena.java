@@ -1975,6 +1975,9 @@ class AcademicArena extends Program {
         assertEquals(toString(LIST_OPERATOR[3]), toString(getOpScreen(Operation.DIVISION)));
     }
 
+    /**
+     * Genre une liste horizontale.
+     */
     Screen genHorizontalList(Screen[] list, int gap) {
         Screen result = newScreen(maxHeight(list)+2, sumWidth(list) + length(list)*gap);
         int cpt = 0;
@@ -1990,10 +1993,16 @@ class AcademicArena extends Program {
         return result;
     }
 
+    /**
+     * Supprime la liste horizontale sans transition.
+     */
     void removeHorizontalList(Screen mainScreen, Screen[] list, int gap, int h, int w) {
         Screen result = newScreen(maxHeight(list)+2, sumWidth(list) + length(list)*gap);
         removePatch(mainScreen, result, h, w);
     }
+        /**
+     * Supprime la liste horizontale avec transition.
+     */
     void removeHorizontalList(Screen mainScreen, Screen[] list, int gap, int h, int w, boolean transistion) {
         if (!transistion) {
             removeHorizontalList(mainScreen, list, gap, h, w);
@@ -2010,7 +2019,9 @@ class AcademicArena extends Program {
         }
     }
 
-
+    /**
+     * Supprime la liste horizontale avec transition en excluant de la suppression les indexs precises dans la liste.
+     */
     void removeHorizontalList(Screen mainScreen, Screen[] list, int gap, int h, int w, boolean transistion, int[] excludeIndexs) {
         if (!transistion) {
             removeHorizontalList(mainScreen, list, gap, h, w);
@@ -2032,7 +2043,9 @@ class AcademicArena extends Program {
             cpt = cpt + 1;
         }
     }
-
+    /**
+     * Genre une liste verticale.
+     */
     Screen genVerticalList(Screen[] list, int gap) {
         Screen result = newScreen(sumHeight(list) + length(list)*gap, maxWidth(list)+2);
         int cpt = 0;
@@ -2047,12 +2060,16 @@ class AcademicArena extends Program {
         }
         return result;
     }
-
+    /**
+     * Supprime une liste verticale sans transition.
+     */
     void removeVerticalList(Screen mainScreen, Screen[] list, int gap, int h, int w) {
         Screen result = newScreen(sumHeight(list) + length(list)*gap, maxWidth(list)+2);
         removePatch(mainScreen, result, h, w);
     }
-
+    /**
+     * Supprime une liste verticale avec transition.
+     */
     void removeVerticalList(Screen mainScreen, Screen[] list, int gap, int h, int w, boolean transistion) {
         if (!transistion) {
             removeVerticalList(mainScreen, list, gap, h, w);
@@ -2068,7 +2085,9 @@ class AcademicArena extends Program {
             cpt = cpt + 1;
         }
     }
-
+    /**
+     * Supprime la liste verticale avec transition en excluant de la suppression les indexs precises dans la liste.
+     */
     void removeVerticalList(Screen mainScreen, Screen[] list, int gap, int h, int w, boolean transistion, int[] excludeIndexs) {
         if (!transistion) {
             removeVerticalList(mainScreen, list, gap, h, w);
