@@ -39,6 +39,9 @@ class AcademicArena extends Program {
 
     // function to load ressources
 
+    /**
+     * Retourne le resultat dans le fichier config concernant la cle donné en parametre.
+     */
     String getFromConfigFile(String key) {
         String content = fileAsString(CONFIG_PATH);
         String result = getValue(content, key);
@@ -46,6 +49,9 @@ class AcademicArena extends Program {
 
     }
 
+    /**
+     * Retourne la valeur de la variable demande à partir d'un String representant le fichier config.
+     */
     String getValue(String config, String key) {
         String[] lines = split(config, '\n');
         String result = "";
@@ -76,7 +82,9 @@ class AcademicArena extends Program {
         assertEquals("value13", getValue(config, "key13"));
         assertEquals("", getValue(config, "pasdansconfig"));
     }
-
+    /**
+     * Sépare un String par le separateur donne en parametre.
+     */
     String[] split(String s, char separator) {
         int nbOccurences = nbOccurences(s, separator);
         String[] result = new String[nbOccurences + 1];
@@ -111,7 +119,9 @@ class AcademicArena extends Program {
         assertEquals("", result[0]);
         assertEquals(",b,c,d", result[1]);
     }
-
+    /**
+     * Compte le nombre de fois qu'un char apparait dans un String.
+     */
     int nbOccurences(String s, char separator) {
         int result = 0;
         for (int i = 0; i < length(s); i++) {
@@ -1065,6 +1075,9 @@ class AcademicArena extends Program {
         assertFalse(contains(list, 10));
     }
 
+    /**
+     * Inverse la liste des mobs.
+     */
     void reverse(Mob[] list) {
         int cpt = 0;
         int last = length(list) - 1;
@@ -1088,7 +1101,9 @@ class AcademicArena extends Program {
     }
 
 
-
+    /**
+     * Inverse le l'ordre dans le tableau de Screen.
+     */
     void reverse(Screen[] list) {
         int cpt = 0;
         int last = length(list) - 1;
@@ -1111,6 +1126,9 @@ class AcademicArena extends Program {
         assertEquals(toString(list[3]), toString(newScreen(10, 10)));
     }
 
+    /**
+     * Verifie la saisie du nombre entre un minimum et un maximum.
+     */
     int chooseNumber(int min, int max) {
         int result = 0;
         do {
