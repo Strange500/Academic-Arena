@@ -1,5 +1,8 @@
 class AcademicArena extends Program {
 
+    final int MAXINT = 2147483646;
+    final int MININT = -2147483648;
+
     final String CONFIG_PATH = "AcademicArena.conf";
     final char CONFIG_SEPARATOR = '=';
     final char[] LIST_EMPTY = new char[]{' ', ' ', ' ', ' ', ' ',' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '　', '⠀'};
@@ -27,10 +30,16 @@ class AcademicArena extends Program {
     final char VERTICAL_LINE = charAt(getFromConfigFile("VERTICAL_LINE"), 0);
     final char HORIZONTAL_LINE = charAt(getFromConfigFile("HORIZONTAL_LINE"), 0);
 
+    final boolean SHOW_RESPONSE = toBoolean(getFromConfigFile("SHOW_RESPONSE"));
+
     final String ADD_COLOR = getANSI_COLOR(getFromConfigFile("ADD_COLOR"));
     final String SUB_COLOR = getANSI_COLOR(getFromConfigFile("SUB_COLOR"));
     final String MUL_COLOR = getANSI_COLOR(getFromConfigFile("MUL_COLOR"));
     final String DIV_COLOR = getANSI_COLOR(getFromConfigFile("DIV_COLOR"));
+
+    final String HIT_SOUND = getFromConfigFile("HIT_SOUND");
+    final String HIT_MOB_SOUND = getFromConfigFile("HIT_MOB_SOUND");
+    final String MAIN_THEME = getFromConfigFile("MAIN_THEME");
 
     final Screen[] LIST_OPERATOR = new Screen[]{loadASCII(getFromConfigFile("PLUS_ASCII"), getWeaknessColor(Operation.ADDITION)), loadASCII(getFromConfigFile("MOINS_ASCII"), getWeaknessColor(Operation.SOUSTRACTION)), loadASCII(getFromConfigFile("FOIS_ASCII"), getWeaknessColor(Operation.MULTIPLICATION)), loadASCII(getFromConfigFile("DIVISION_ASCII"), getWeaknessColor(Operation.DIVISION))};
 
@@ -43,6 +52,9 @@ class AcademicArena extends Program {
     Screen main = newScreen(51,250);
     Player player;
     
+    boolean toBoolean(String s) {        
+        return equals(s, "TRUE");
+    }
 
     // function to load ressources
 
@@ -1154,13 +1166,61 @@ class AcademicArena extends Program {
         assertEquals(toString(list[3]), toString(newScreen(10, 10)));
     }
 
+    boolean isNumeric(String text) {
+        boolean result = true;
+        if (charAt(text, 0) == '-') {
+            text = substring(text, 1, length(text));
+        }
+        int cpt = 0;
+        while (cpt < length(text) && result) {
+            result = charAt(text, cpt) >= '0' && charAt(text, cpt) <= '9';
+            cpt = cpt + 1;
+        }
+        return result;
+    }
+
+    void testIsNumeric() {
+        assertTrue(isNumeric("0"));
+        assertTrue(isNumeric("1"));
+        assertTrue(isNumeric("2"));
+        assertTrue(isNumeric("3"));
+        assertTrue(isNumeric("4"));
+        assertTrue(isNumeric("5"));
+        assertTrue(isNumeric("6"));
+        assertTrue(isNumeric("7"));
+        assertTrue(isNumeric("8"));
+        assertTrue(isNumeric("9"));
+        assertTrue(isNumeric("-0"));
+        assertTrue(isNumeric("-1"));
+        assertTrue(isNumeric("-2"));
+        assertTrue(isNumeric("-3"));
+        assertTrue(isNumeric("-4"));
+        assertTrue(isNumeric("-5"));
+        assertTrue(isNumeric("-6"));
+        assertTrue(isNumeric("-7"));
+        assertTrue(isNumeric("-8"));
+        assertTrue(isNumeric("-9"));
+        assertFalse(isNumeric("a"));
+        assertFalse(isNumeric("b"));
+        assertFalse(isNumeric("c"));
+        assertFalse(isNumeric("d"));
+        assertFalse(isNumeric("e"));
+        assertFalse(isNumeric("f"));
+        assertFalse(isNumeric("g"));
+        assertFalse(isNumeric("h"));
+    }
+
     /**
      * Verifie la saisie du nombre entre un minimum et un maximum.
      */
     int chooseNumber(int min, int max) {
-        int result = 0;
+        int result = max+1;
+        String temp = "";
         do {
-            result = readInt();
+            temp = readString();
+            if (isNumeric(temp)) {
+                result = StringToInt(temp);
+            }
         } while (result < min || result > max);
         return result;
     }
@@ -2492,7 +2552,7 @@ class AcademicArena extends Program {
         int response;
         Screen text;
         printCalcul(nb1, nb2, op);
-        response = readInt();
+        response = chooseNumber(MININT, MAXINT);
         removecalcul(nb1, nb2, op);
         if (calculReussi(nb1, nb2, op, response)) {
             text = genText("OK", ANSI_GREEN);
@@ -2505,10 +2565,18 @@ class AcademicArena extends Program {
         }
         else {
             text = genText("X", ANSI_RED);
+            Screen textR = getNumber(calculResult(nb1, nb2, op), ANSI_WHITE);
             applyPatch(main, text, main.height/2 - text.height/2, main.width/2 - text.width/2);
+            if (SHOW_RESPONSE) {
+                applyPatch(main, textR, main.height/2 - textR.height/2 + 5, main.width/2 - text.width/2 );
+            }
             refresh();
             delay(1000);
             removePatch(main, text, main.height/2 - text.height/2, main.width/2 - text.width/2);
+            if (SHOW_RESPONSE) {
+                removePatch(main, textR, main.height/2 - textR.height/2 + 5, main.width/2 - text.width/2 );
+            }
+            
         }
         if (mob.hp <= 0) {
             mob.hp = 0;
@@ -2536,8 +2604,10 @@ class AcademicArena extends Program {
             Screen goodAnswer = genText("reponse ",ANSI_WHITE);
             Screen goodAnswer2 = getNumber(StringToInt(q.reponse),ANSI_WHITE);
             applyPatch(main, title2, main.height/2-title2.height/2, main.width/2-title.width/2);
-            applyPatch(main, goodAnswer, main.height/2 + title2.height , main.width/2-goodAnswer.width/2 - goodAnswer2.width/2);
-            applyPatch(main, goodAnswer2, main.height/2 + title2.height , main.width/2 -goodAnswer.width/2 + goodAnswer.width);
+            if (SHOW_RESPONSE) {
+                applyPatch(main, goodAnswer, main.height/2 + title2.height , main.width/2-goodAnswer.width/2 - goodAnswer2.width/2);
+                applyPatch(main, goodAnswer2, main.height/2 + title2.height , main.width/2 -goodAnswer.width/2 + goodAnswer.width);
+            }
             refresh();
             delay(3000);
             applyPatch(main,saveScreen,0,0);
@@ -2655,6 +2725,29 @@ class AcademicArena extends Program {
         assertFalse(calculReussi(1, 1, Operation.DIVISION, 2));
     }
 
+    int calculResult(int nb1, int nb2, Operation op) {
+        int result;
+        switch (op) {
+            case ADDITION:
+                result = nb1 + nb2 ;
+                break;
+            case SOUSTRACTION:
+                result = nb1 - nb2 ;
+                break;
+            case MULTIPLICATION:
+                result = nb1 * nb2 ;
+                break;
+            case DIVISION:
+                result = nb1 / nb2 ;
+                break;
+            default:
+                result = 0;
+                break;
+        }
+        return result;
+    }
+    
+
     void chooseBonus() {
         Screen saveScreen = copy(main);
         Screen text = genText("Choisi un bonus", ANSI_WHITE);
@@ -2680,18 +2773,18 @@ class AcademicArena extends Program {
 
 
     int damageToPlayer(int level, Mob mob) {
-        playSound("./Son/hitHurt.wav");
+        playSound(HIT_SOUND);
         return (int) (random()*mob.atk*level) * 3;
     }
 
     int damageDoneToMob(Mob mob, Operation op) {
         if (op == mob.faiblesse) {
             print("Coup critique ! ");
-            playSound("./Son/hitToMob.wav");
+            playSound(HIT_MOB_SOUND);
             return player.atk * 3;
         }
         else {
-            playSound("./Son/hitToMob.wav");
+            playSound(HIT_MOB_SOUND);
             return player.atk;
         }
     }
@@ -2933,7 +3026,7 @@ class AcademicArena extends Program {
         loadScores();
         boolean gameOver = false;
         int level = 1;
-        playSound("./Music3.wav");
+        playSound(MAIN_THEME);
         print("Entrez votre pseudo : ");
         player = newPlayer(readString(), null);
         genTitleScreen();
