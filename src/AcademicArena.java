@@ -24,9 +24,16 @@ class AcademicArena extends Program {
     final String MOBS_FILE = getFromConfigFile("MOBS_FILE");
     final String BONUS_FILE = getFromConfigFile("BONUS_FILE");
     final String BOSS_FILE = getFromConfigFile("BOSS_FILE");
-    final Screen[] LIST_OPERATOR = new Screen[]{loadASCII(getFromConfigFile("PLUS_ASCII"), ANSI_RED), loadASCII(getFromConfigFile("MOINS_ASCII"), ANSI_GREEN), loadASCII(getFromConfigFile("FOIS_ASCII"), ANSI_YELLOW), loadASCII(getFromConfigFile("DIVISION_ASCII"), ANSI_BLUE)};
     final char VERTICAL_LINE = charAt(getFromConfigFile("VERTICAL_LINE"), 0);
     final char HORIZONTAL_LINE = charAt(getFromConfigFile("HORIZONTAL_LINE"), 0);
+
+    final String ADD_COLOR = getANSI_COLOR(getFromConfigFile("ADD_COLOR"));
+    final String SUB_COLOR = getANSI_COLOR(getFromConfigFile("SUB_COLOR"));
+    final String MUL_COLOR = getANSI_COLOR(getFromConfigFile("MUL_COLOR"));
+    final String DIV_COLOR = getANSI_COLOR(getFromConfigFile("DIV_COLOR"));
+
+    final Screen[] LIST_OPERATOR = new Screen[]{loadASCII(getFromConfigFile("PLUS_ASCII"), getWeaknessColor(Operation.ADDITION)), loadASCII(getFromConfigFile("MOINS_ASCII"), getWeaknessColor(Operation.SOUSTRACTION)), loadASCII(getFromConfigFile("FOIS_ASCII"), getWeaknessColor(Operation.MULTIPLICATION)), loadASCII(getFromConfigFile("DIVISION_ASCII"), getWeaknessColor(Operation.DIVISION))};
+
     
     final Pixel EMPTY_PIXEL = newPixelEmpty();
     Question[] listQuestion;
@@ -50,11 +57,14 @@ class AcademicArena extends Program {
         String[] lines = split(config, '\n');
         String result = "";
         for (int i = 0; i < length(lines); i++) {
-            String start = split(lines[i], CONFIG_SEPARATOR)[0];
-            String value = split(lines[i], CONFIG_SEPARATOR)[1];
-            if (equals(start, key)) {
-                return value;
+            if (!(charAt(lines[i], 0) == '#')) {
+                String start = split(lines[i], CONFIG_SEPARATOR)[0];
+                String value = split(lines[i], CONFIG_SEPARATOR)[1];
+                if (equals(start, key)) {
+                    return value;
+                }
             }
+            
         }
         return result;
     }
@@ -491,7 +501,14 @@ class AcademicArena extends Program {
         }
         saveCSV(csvTable, SCORE_FILE);
     }
-
+    // le test est desactiver pour ne pas falsifier le fichier de score
+    // void testSaveScores() {
+    //     listScore = new Score[]{newScore("toto", 10), newScore("titi", 20), newScore("tata", 30)};
+    //     Score[] temp = new Score[]{newScore("toto", 10), newScore("titi", 20), newScore("tata", 30)};
+    //     saveScores();
+    //     loadScores();
+    //     assertTrue(equals(listScore, temp));
+    // }
 
     // copy functions
 
@@ -675,6 +692,17 @@ class AcademicArena extends Program {
      */
     boolean equals(Pixel p1, Pixel p2) {
         return charAt(p1.c, length(p1.c) - 1) ==  charAt(p2.c, length(p2.c) - 1);
+    }
+
+    boolean equals(Score[] p1, Score[] p2) {
+        if (length(p1) != length(p2)) {
+            return false;
+        }
+        boolean result = true;
+        for (int i = 0; i < length(p1); i++) {
+            result = result && equals(p1[i], p2[i]);
+        }
+        return result;
     }
 
     /**
@@ -2128,6 +2156,34 @@ class AcademicArena extends Program {
         assertEquals(getWeaknessColor("soustraction"), ANSI_GREEN);
     }
 
+    String getWeaknessColor(Operation op) {
+        String result = "";
+        switch (op) {
+            case ADDITION:
+                result = ADD_COLOR;
+                break;
+            case MULTIPLICATION:
+                result = MUL_COLOR;
+                break;
+            case DIVISION:
+                result = DIV_COLOR;
+                break;
+            case SOUSTRACTION:
+                result = SUB_COLOR;
+                break;
+            default:
+                result = ANSI_TEXT_DEFAULT_COLOR;
+                break;
+        }
+        return result;
+    }
+
+    void testGetWeaknessColor2() {
+        assertEquals(getWeaknessColor(Operation.ADDITION), ADD_COLOR);
+        assertEquals(getWeaknessColor(Operation.MULTIPLICATION), MUL_COLOR);
+        assertEquals(getWeaknessColor(Operation.DIVISION), DIV_COLOR);
+        assertEquals(getWeaknessColor(Operation.SOUSTRACTION), SUB_COLOR);
+    }
 
 
     /////////////////////////////////////
