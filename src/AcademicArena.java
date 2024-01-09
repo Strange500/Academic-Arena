@@ -46,6 +46,9 @@ class AcademicArena extends Program {
 
     // function to load ressources
 
+    /**
+     * Retourne le resultat dans le fichier config concernant la cle donné en parametre.
+     */
     String getFromConfigFile(String key) {
         String content = fileAsString(CONFIG_PATH);
         String result = getValue(content, key);
@@ -53,6 +56,9 @@ class AcademicArena extends Program {
 
     }
 
+    /**
+     * Retourne la valeur de la variable demande à partir d'un String representant le fichier config.
+     */
     String getValue(String config, String key) {
         String[] lines = split(config, '\n');
         String result = "";
@@ -86,7 +92,9 @@ class AcademicArena extends Program {
         assertEquals("value13", getValue(config, "key13"));
         assertEquals("", getValue(config, "pasdansconfig"));
     }
-
+    /**
+     * Sépare un String par le separateur donne en parametre.
+     */
     String[] split(String s, char separator) {
         int nbOccurences = nbOccurences(s, separator);
         String[] result = new String[nbOccurences + 1];
@@ -121,7 +129,9 @@ class AcademicArena extends Program {
         assertEquals("", result[0]);
         assertEquals(",b,c,d", result[1]);
     }
-
+    /**
+     * Compte le nombre de fois qu'un char apparait dans un String.
+     */
     int nbOccurences(String s, char separator) {
         int result = 0;
         for (int i = 0; i < length(s); i++) {
@@ -1093,6 +1103,9 @@ class AcademicArena extends Program {
         assertFalse(contains(list, 10));
     }
 
+    /**
+     * Inverse la liste des mobs.
+     */
     void reverse(Mob[] list) {
         int cpt = 0;
         int last = length(list) - 1;
@@ -1116,7 +1129,9 @@ class AcademicArena extends Program {
     }
 
 
-
+    /**
+     * Inverse le l'ordre dans le tableau de Screen.
+     */
     void reverse(Screen[] list) {
         int cpt = 0;
         int last = length(list) - 1;
@@ -1139,6 +1154,9 @@ class AcademicArena extends Program {
         assertEquals(toString(list[3]), toString(newScreen(10, 10)));
     }
 
+    /**
+     * Verifie la saisie du nombre entre un minimum et un maximum.
+     */
     int chooseNumber(int min, int max) {
         int result = 0;
         do {
@@ -1831,13 +1849,19 @@ class AcademicArena extends Program {
             for (int i = 0; i < length(list_nb); i++) {
                 list_nb[i] = newScreen(0, 0);
             }
-            int cpt = 0;
-            while (number > 0) {
-                int r = number % 10;
-                number = number / 10;
-                list_nb[cpt] = loadASCII(NUMBERS_DIR + "/" + r + ".txt", color);
-                cpt = cpt + 1;
+            if (number == 0) {
+                list_nb[0] = loadASCII(NUMBERS_DIR + "/" + '0' + ".txt", color);
             }
+            else {
+                int cpt = 0;
+                while (number > 0) {
+                    int r = number % 10;
+                    number = number / 10;
+                    list_nb[cpt] = loadASCII(NUMBERS_DIR + "/" + r + ".txt", color);
+                    cpt = cpt + 1;
+                }
+            }
+            
             int withDec = 0;
             Screen number_ASCII;
             if (neg) {
@@ -1976,6 +2000,9 @@ class AcademicArena extends Program {
         assertEquals(toString(LIST_OPERATOR[3]), toString(getOpScreen(Operation.DIVISION)));
     }
 
+    /**
+     * Genre une liste horizontale.
+     */
     Screen genHorizontalList(Screen[] list, int gap) {
         Screen result = newScreen(maxHeight(list)+2, sumWidth(list) + length(list)*gap);
         int cpt = 0;
@@ -1991,10 +2018,16 @@ class AcademicArena extends Program {
         return result;
     }
 
+    /**
+     * Supprime la liste horizontale sans transition.
+     */
     void removeHorizontalList(Screen mainScreen, Screen[] list, int gap, int h, int w) {
         Screen result = newScreen(maxHeight(list)+2, sumWidth(list) + length(list)*gap);
         removePatch(mainScreen, result, h, w);
     }
+        /**
+     * Supprime la liste horizontale avec transition.
+     */
     void removeHorizontalList(Screen mainScreen, Screen[] list, int gap, int h, int w, boolean transistion) {
         if (!transistion) {
             removeHorizontalList(mainScreen, list, gap, h, w);
@@ -2011,7 +2044,9 @@ class AcademicArena extends Program {
         }
     }
 
-
+    /**
+     * Supprime la liste horizontale avec transition en excluant de la suppression les indexs precises dans la liste.
+     */
     void removeHorizontalList(Screen mainScreen, Screen[] list, int gap, int h, int w, boolean transistion, int[] excludeIndexs) {
         if (!transistion) {
             removeHorizontalList(mainScreen, list, gap, h, w);
@@ -2033,7 +2068,9 @@ class AcademicArena extends Program {
             cpt = cpt + 1;
         }
     }
-
+    /**
+     * Genre une liste verticale.
+     */
     Screen genVerticalList(Screen[] list, int gap) {
         Screen result = newScreen(sumHeight(list) + length(list)*gap, maxWidth(list)+2);
         int cpt = 0;
@@ -2048,12 +2085,16 @@ class AcademicArena extends Program {
         }
         return result;
     }
-
+    /**
+     * Supprime une liste verticale sans transition.
+     */
     void removeVerticalList(Screen mainScreen, Screen[] list, int gap, int h, int w) {
         Screen result = newScreen(sumHeight(list) + length(list)*gap, maxWidth(list)+2);
         removePatch(mainScreen, result, h, w);
     }
-
+    /**
+     * Supprime une liste verticale avec transition.
+     */
     void removeVerticalList(Screen mainScreen, Screen[] list, int gap, int h, int w, boolean transistion) {
         if (!transistion) {
             removeVerticalList(mainScreen, list, gap, h, w);
@@ -2069,7 +2110,9 @@ class AcademicArena extends Program {
             cpt = cpt + 1;
         }
     }
-
+    /**
+     * Supprime la liste verticale avec transition en excluant de la suppression les indexs precises dans la liste.
+     */
     void removeVerticalList(Screen mainScreen, Screen[] list, int gap, int h, int w, boolean transistion, int[] excludeIndexs) {
         if (!transistion) {
             removeVerticalList(mainScreen, list, gap, h, w);
@@ -2853,7 +2896,7 @@ class AcademicArena extends Program {
         Screen prompt = newScreen(main.height/4, main.width);
         int r;
         Screen[] list_perso = new Screen[]{loadASCII(PLAYER, ANSI_RED), loadASCII(PLAYER_2, ANSI_GREEN), loadASCII(PLAYER_3, ANSI_YELLOW), loadASCII(PLAYER_4, ANSI_BLUE)};
-        Screen choose_ASCII = genText("Choisi ton personnage", "");
+        Screen choose_ASCII = genText("Choisis ton personnage", "");
         applyPatch(choice, choose_ASCII, 3, choice.width/2 - choose_ASCII.width/2);
         prompt = genHorizontalList(list_perso, 20);
         applyPatch(main, choice, 0, 0);
@@ -2870,7 +2913,6 @@ class AcademicArena extends Program {
         moveTo(main, list_perso[r-1], hchoice, wchoice, (main.height/2 - list_perso[r-1].height/2) -5, 20, 4);
         refresh();
         return list_perso[r-1];
-
     }
 
 
@@ -2929,6 +2971,7 @@ class AcademicArena extends Program {
     }
 
     void _algorithm() {
+        println(toString(getNumber(0, "")));
         // loadScores();
         // printScoreTab();
         // readString();
@@ -2936,11 +2979,11 @@ class AcademicArena extends Program {
         // printScoreTab();
         // readString();
         // saveScores();
-        Screen[] list = new Screen[]{loadASCII(PLAYER, ANSI_RED), loadASCII(PLAYER_2, ANSI_GREEN), loadASCII(PLAYER_3, ANSI_YELLOW), loadASCII(PLAYER_4, ANSI_BLUE)};
-        applyPatch(main, genHorizontalList(list, 20), 0, 0);
-        refresh();
-        removeHorizontalList(main, list, 20, 0, 0, true, new int[]{1});
-        refresh();
+        // Screen[] list = new Screen[]{loadASCII(PLAYER, ANSI_RED), loadASCII(PLAYER_2, ANSI_GREEN), loadASCII(PLAYER_3, ANSI_YELLOW), loadASCII(PLAYER_4, ANSI_BLUE)};
+        // applyPatch(main, genHorizontalList(list, 20), 0, 0);
+        // refresh();
+        // removeHorizontalList(main, list, 20, 0, 0, true, new int[]{1});
+        // refresh();
         // loadMob();
         // boolean gameOver = false;
         // int level = 1;
