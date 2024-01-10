@@ -28,6 +28,8 @@ Permet la compilation des fichiers présents dans 'src' et création des fichier
 ```
 Permet le lancement du jeu
 
+Vous pouvez configurer le jeux en modifiant le fichier AcademicArena.conf
+
 <hr>
 
 Développé par Florian Pollet & Roget Benjamin
