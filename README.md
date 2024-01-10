@@ -1,6 +1,6 @@
 Academic Arena
 ===========
-Ce jeu est un projet réaliser dans le cadre de la SAE ??? du BUT Informatique de l'IUT de villeneuve d'Asq
+Ce jeu est un projet réaliser dans le cadre de la SAE S1.02 du BUT Informatique de l'IUT de villeneuve d'Asq
 
 
 # Présentation de Academic Arena
