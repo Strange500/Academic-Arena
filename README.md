@@ -1,33 +1,16 @@
-         .8.              ,o888888o.             .8.          8 888888888o.      8 8888888888            ,8.       ,8.           8 8888     ,o888888o.   
-        .888.            8888     `88.          .888.         8 8888    `^888.   8 8888                 ,888.     ,888.          8 8888    8888     `88. 
-       :88888.        ,8 8888       `8.        :88888.        8 8888        `88. 8 8888                .`8888.   .`8888.         8 8888 ,8 8888       `8.
-      . `88888.       88 8888                 . `88888.       8 8888         `88 8 8888               ,8.`8888. ,8.`8888.        8 8888 88 8888          
-     .8. `88888.      88 8888                .8. `88888.      8 8888          88 8 888888888888      ,8'8.`8888,8^8.`8888.       8 8888 88 8888          
-    .8`8. `88888.     88 8888               .8`8. `88888.     8 8888          88 8 8888             ,8' `8.`8888' `8.`8888.      8 8888 88 8888          
-   .8' `8. `88888.    88 8888              .8' `8. `88888.    8 8888         ,88 8 8888            ,8'   `8.`88'   `8.`8888.     8 8888 88 8888          
-  .8'   `8. `88888.   `8 8888       .8'   .8'   `8. `88888.   8 8888        ,88' 8 8888           ,8'     `8.`'     `8.`8888.    8 8888 `8 8888       .8'
- .888888888. `88888.     8888     ,88'   .888888888. `88888.  8 8888    ,o88P'   8 8888          ,8'       `8        `8.`8888.   8 8888    8888     ,88' 
-.8'       `8. `88888.     `8888888P'    .8'       `8. `88888. 8 888888888P'      8 888888888888 ,8'         `         `8.`8888.  8 8888     `8888888P'   
-
-                                   .8.          8 888888888o.   8 8888888888   b.             8          .8.         
-                                  .888.         8 8888    `88.  8 8888         888o.          8         .888.        
-                                 :88888.        8 8888     `88  8 8888         Y88888o.       8        :88888.       
-                                . `88888.       8 8888     ,88  8 8888         .`Y888888o.    8       . `88888.      
-                               .8. `88888.      8 8888.   ,88'  8 888888888888 8o. `Y888888o. 8      .8. `88888.     
-                              .8`8. `88888.     8 888888888P'   8 8888         8`Y8o. `Y88888o8     .8`8. `88888.    
-                             .8' `8. `88888.    8 8888`8b       8 8888         8   `Y8o. `Y8888    .8' `8. `88888.   
-                            .8'   `8. `88888.   8 8888 `8b.     8 8888         8      `Y8o. `Y8   .8'   `8. `88888.  
-                           .888888888. `88888.  8 8888   `8b.   8 8888         8         `Y8o.`  .888888888. `88888. 
-                          .8'       `8. `88888. 8 8888     `88. 8 888888888888 8            `Yo .8'       `8. `88888.
+Academic Arena
 ===========
 
-Développé par Florian Pollet Roget Benjamin
-Contacts : florian.pollet.etu@univ-lille.fr , benjamin.roget.etu@univ-lille.fr
+
 
 # Présentation de Academic Arena
 
+Academix Arena est un jeu ludo-pédagogique destiné aux élèves d'école primaire.<br>
+Ce jeu propose des combats tour par tour dans lesquels vous affrontez plusieurs vagues d'ennemis par niveaux.Pour les combattre, vous utilisez les opérateurs de base de mathématiques. <br>
+Entre les niveaux, une question bonus portant sur l'histoire vous est posée, vous permettant d'améliorer votre personnage.
+Des boss pourront apparaître pour challenger le joueur.
+Ce jeu propose un tableau des scores, vous permettant de stimuler votre esprit de compétition.
 
-<Description de votre jeu>
 Des captures d'écran illustrant le fonctionnement du logiciel sont proposées dans le répertoire shots.
 
 
@@ -44,3 +27,10 @@ Permet la compilation des fichiers présents dans 'src' et création des fichier
 ./run.sh
 ```
 Permet le lancement du jeu
+
+<hr>
+
+Développé par Florian Pollet & Roget Benjamin
+Contacts : 
+ - florian.pollet.etu@univ-lille.fr 
+ - benjamin.roget.etu@univ-lille.fr
