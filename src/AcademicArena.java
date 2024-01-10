@@ -6,11 +6,13 @@ class AcademicArena extends Program {
     final String CONFIG_PATH = "AcademicArena.conf";
     final char CONFIG_SEPARATOR = '=';
     final char[] LIST_EMPTY = new char[]{' ', ' ', ' ', ' ', ' ',' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '　', '⠀'};
-    
-    final char EMPTY = charAt(getFromConfigFile("EMPTY"), 0);
-    final String RESSOURCES_DIR = getFromConfigFile("RESSOURCES_DIR");
+    final Pixel EMPTY_PIXEL = newPixelEmpty();
+
+    // GAMEPLAY
+    final boolean SHOW_RESPONSE = toBoolean(getFromConfigFile("SHOW_RESPONSE"));
+
+    // ASCII ART & GRAPHICAL SETTINGS
     final String GAMEOVER = getFromConfigFile("GAMEOVER");
-    final String OPERATOR_DIR = getFromConfigFile("OPERATOR_DIR");
     final String LOGO_PART_A = getFromConfigFile("LOGO_PART_A");
     final String LOGO_PART_B = getFromConfigFile("LOGO_PART_B");
     final String PLAYER = getFromConfigFile("PLAYER");
@@ -19,41 +21,67 @@ class AcademicArena extends Program {
     final String PLAYER_4 = getFromConfigFile("PLAYER_4");
     final String SWORD = getFromConfigFile("SWORD");
     final String HEART = getFromConfigFile("HEART");
+    final char VERTICAL_LINE = charAt(getFromConfigFile("VERTICAL_LINE"), 0);
+    final char HORIZONTAL_LINE = charAt(getFromConfigFile("HORIZONTAL_LINE"), 0);
+    final char EMPTY = charAt(getFromConfigFile("EMPTY"), 0);
+
+    // OPREATORS
+    final String PLUS_ASCII = getFromConfigFile("PLUS_ASCII");
+    final String MOINS_ASCII = getFromConfigFile("MOINS_ASCII");
+    final String FOIS_ASCII = getFromConfigFile("FOIS_ASCII");
+    final String DIVISION_ASCII = getFromConfigFile("DIVISION_ASCII");
+    final Screen[] LIST_OPERATOR = new Screen[]{
+        loadASCII(PLUS_ASCII, getWeaknessColor(Operation.ADDITION)), 
+        loadASCII(MOINS_ASCII, getWeaknessColor(Operation.SOUSTRACTION)), 
+        loadASCII(FOIS_ASCII, getWeaknessColor(Operation.MULTIPLICATION)), 
+        loadASCII(DIVISION_ASCII, getWeaknessColor(Operation.DIVISION))
+    };
+
+
+    // DIRECTORIES
+    final String RESSOURCES_DIR = getFromConfigFile("RESSOURCES_DIR");
+    final String OPERATOR_DIR = getFromConfigFile("OPERATOR_DIR");
     final String NUMBERS_DIR = getFromConfigFile("NUMBERS_DIR");
     final String MOB_DIR = getFromConfigFile("MOB_DIR");
     final String BOSS_DIR = getFromConfigFile("BOSS_DIR");
-    final String PLAYERS_FILE = getFromConfigFile("PLAYERS_FILE");
-    final String SCORE_FILE = getFromConfigFile("SCORE_FILE");
-    final String MOBS_FILE = getFromConfigFile("MOBS_FILE");
-    final String BONUS_FILE = getFromConfigFile("BONUS_FILE");
-    final String BOSS_FILE = getFromConfigFile("BOSS_FILE");
-    final char VERTICAL_LINE = charAt(getFromConfigFile("VERTICAL_LINE"), 0);
-    final char HORIZONTAL_LINE = charAt(getFromConfigFile("HORIZONTAL_LINE"), 0);
-
-    final boolean SHOW_RESPONSE = toBoolean(getFromConfigFile("SHOW_RESPONSE"));
-
+    final String LETTER_DIR = getFromConfigFile("LETTER_DIR");
+    
+    // COLORS
     final String ADD_COLOR = getANSI_COLOR(getFromConfigFile("ADD_COLOR"));
     final String SUB_COLOR = getANSI_COLOR(getFromConfigFile("SUB_COLOR"));
     final String MUL_COLOR = getANSI_COLOR(getFromConfigFile("MUL_COLOR"));
     final String DIV_COLOR = getANSI_COLOR(getFromConfigFile("DIV_COLOR"));
 
+    // SOUND
     final String HIT_SOUND = getFromConfigFile("HIT_SOUND");
     final String HIT_MOB_SOUND = getFromConfigFile("HIT_MOB_SOUND");
     final String MAIN_THEME = getFromConfigFile("MAIN_THEME");
 
-    final Screen[] LIST_OPERATOR = new Screen[]{loadASCII(getFromConfigFile("PLUS_ASCII"), getWeaknessColor(Operation.ADDITION)), loadASCII(getFromConfigFile("MOINS_ASCII"), getWeaknessColor(Operation.SOUSTRACTION)), loadASCII(getFromConfigFile("FOIS_ASCII"), getWeaknessColor(Operation.MULTIPLICATION)), loadASCII(getFromConfigFile("DIVISION_ASCII"), getWeaknessColor(Operation.DIVISION))};
+    // CSV
+    final String PLAYERS_FILE = getFromConfigFile("PLAYERS_FILE");
+    final String SCORE_FILE = getFromConfigFile("SCORE_FILE");
+    final String MOBS_FILE = getFromConfigFile("MOBS_FILE");
+    final String BONUS_FILE = getFromConfigFile("BONUS_FILE");
+    final String BOSS_FILE = getFromConfigFile("BOSS_FILE");
 
-    
-    final Pixel EMPTY_PIXEL = newPixelEmpty();
+    // VAR
     Question[] listQuestion;
     Mob[] listMob ;
     Mob[] listBoss ;
     Score[] listScore;
     Screen main = newScreen(51,250);
     Player player;
-    
+
+
+
+    // fonction qui convertie une chaine de caractere en boolean
     boolean toBoolean(String s) {        
         return equals(s, "TRUE");
+    }
+
+    void testToBoolean() {
+        assertTrue(toBoolean("TRUE"));
+        assertFalse(toBoolean("FALSE"));
     }
 
     // function to load ressources
@@ -1165,7 +1193,9 @@ class AcademicArena extends Program {
         assertEquals(toString(list[2]), toString(newScreen(10, 10)));
         assertEquals(toString(list[3]), toString(newScreen(10, 10)));
     }
-
+    /**
+     * renvoie true si la chaine représente un nombre entier, positif ou non. Renvoie false sinon.
+     */
     boolean isNumeric(String text) {
         boolean result = true;
         if (charAt(text, 0) == '-') {
@@ -1870,6 +1900,10 @@ class AcademicArena extends Program {
         return result;
     }
 
+
+    /**
+     * Permet de donner une couleur ou un fond a l'ecran en parametre
+     */
     void setcolor(Screen screen, String color) {
         for (int i = 0; i < length(screen.screen, 1); i++) {
             for (int j = 0; j < length(screen.screen, 2); j++) {
@@ -2191,7 +2225,9 @@ class AcademicArena extends Program {
             cpt = cpt + 1;
         }
     }
-
+    /**
+     * genere un ecran representant un texte avec les caracteres normaux (pas en ASCII ART)
+     */
     Screen genLittleText(String text, String color) {
         Screen result = newScreen(1, length(text));
         for (int i = 0; i < length(text); i++) {
@@ -2229,7 +2265,7 @@ class AcademicArena extends Program {
         assertEquals(getOperation("division"), Operation.DIVISION);
         assertEquals(getOperation("soustraction"), Operation.SOUSTRACTION);
     }
-
+    
     String getWeaknessColor(String faiblesse) {
         String result = "";
         switch (faiblesse) {
@@ -2513,7 +2549,6 @@ class AcademicArena extends Program {
             op = selectAttaque();
             println("Qui voulez vous attaquer ? ");
             int choice = chooseNumber(1, length(listToDefeat)) - 1;
-            print(choice);
             if (!listToDefeat[choice].dead) {
                 attaquerMob(op, difficulty, listToDefeat[choice]);
                 updateMobBattle(listToDefeat);
@@ -2930,9 +2965,9 @@ class AcademicArena extends Program {
 
     String getletterPath(char c) {
         if (c == ' ') {
-            return RESSOURCES_DIR + "/letters/" + "space" + ".txt";
+            return LETTER_DIR + "/space.txt";
         }
-        return RESSOURCES_DIR + "/letters/" + c + ".txt"; 
+        return LETTER_DIR + "/" + c + ".txt"; 
     }
 
     // game events graphics
@@ -2963,7 +2998,7 @@ class AcademicArena extends Program {
     }
 
     int getPlayerBestScore(String pseudo) {
-        extensions.CSVFile f = loadCSV(RESSOURCES_DIR + "/" + "scores.csv");
+        extensions.CSVFile f = loadCSV(SCORE_FILE);
         int result = 0;
         int cpt = 1;
         while (cpt < rowCount(f) && result == 0) {
@@ -2976,7 +3011,7 @@ class AcademicArena extends Program {
     }
 
     Player[] getPlayers() {
-        extensions.CSVFile f = loadCSV(RESSOURCES_DIR + "/" + "scores.csv");
+        extensions.CSVFile f = loadCSV(SCORE_FILE);
         Player[] table = new Player[rowCount(f)-1];
         for (int i = 1; i < rowCount(f); i++) {
             table[i-1] = newPlayer(getCell(f, i, 0), null);
