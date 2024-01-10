@@ -10,6 +10,7 @@ class AcademicArena extends Program {
 
     // GAMEPLAY
     final boolean SHOW_RESPONSE = toBoolean(getFromConfigFile("SHOW_RESPONSE"));
+    final int DIFFICULTY = StringToInt(getFromConfigFile("DIFFICULTY"));
 
     // ASCII ART & GRAPHICAL SETTINGS
     final String GAMEOVER = getFromConfigFile("GAMEOVER");
@@ -30,12 +31,7 @@ class AcademicArena extends Program {
     final String MOINS_ASCII = getFromConfigFile("MOINS_ASCII");
     final String FOIS_ASCII = getFromConfigFile("FOIS_ASCII");
     final String DIVISION_ASCII = getFromConfigFile("DIVISION_ASCII");
-    final Screen[] LIST_OPERATOR = new Screen[]{
-        loadASCII(PLUS_ASCII, getWeaknessColor(Operation.ADDITION)), 
-        loadASCII(MOINS_ASCII, getWeaknessColor(Operation.SOUSTRACTION)), 
-        loadASCII(FOIS_ASCII, getWeaknessColor(Operation.MULTIPLICATION)), 
-        loadASCII(DIVISION_ASCII, getWeaknessColor(Operation.DIVISION))
-    };
+    
 
 
     // DIRECTORIES
@@ -63,6 +59,13 @@ class AcademicArena extends Program {
     final String MOBS_FILE = getFromConfigFile("MOBS_FILE");
     final String BONUS_FILE = getFromConfigFile("BONUS_FILE");
     final String BOSS_FILE = getFromConfigFile("BOSS_FILE");
+
+    final Screen[] LIST_OPERATOR = new Screen[]{
+        loadASCII(PLUS_ASCII, getWeaknessColor(Operation.ADDITION)), 
+        loadASCII(MOINS_ASCII, getWeaknessColor(Operation.SOUSTRACTION)), 
+        loadASCII(FOIS_ASCII, getWeaknessColor(Operation.MULTIPLICATION)), 
+        loadASCII(DIVISION_ASCII, getWeaknessColor(Operation.DIVISION))
+    };
 
     // VAR
     Question[] listQuestion;
@@ -1198,6 +1201,9 @@ class AcademicArena extends Program {
      */
     boolean isNumeric(String text) {
         boolean result = true;
+        if (length(text) == 0) {
+            return false;
+        }
         if (charAt(text, 0) == '-') {
             text = substring(text, 1, length(text));
         }
@@ -2265,7 +2271,9 @@ class AcademicArena extends Program {
         assertEquals(getOperation("division"), Operation.DIVISION);
         assertEquals(getOperation("soustraction"), Operation.SOUSTRACTION);
     }
-    
+    /**
+     * IDonne la couleur de la faiblesse 
+     */
     String getWeaknessColor(String faiblesse) {
         String result = "";
         switch (faiblesse) {
@@ -2294,7 +2302,9 @@ class AcademicArena extends Program {
         assertEquals(getWeaknessColor("division"), ANSI_BLUE);
         assertEquals(getWeaknessColor("soustraction"), ANSI_GREEN);
     }
-
+    /**
+     * Donne la couleur de l'operation
+     */
     String getWeaknessColor(Operation op) {
         String result = "";
         switch (op) {
@@ -2329,6 +2339,9 @@ class AcademicArena extends Program {
     //////     game functions       /////
     /////////////////////////////////////
 
+    /**
+     * Funtion d'animation qui fait entrer les mob dans l'ecran.
+     */
     Screen mobEntrance(Mob[] mobs) {
         int gap = 5;
         Screen result = genVerticalList(getMobScreens(mobs), gap);
@@ -2342,20 +2355,9 @@ class AcademicArena extends Program {
         return result;
     }
 
-    void killMobAnim(Screen[] mobs, int indexKilled) {
-        int[] alive = new int[length(mobs) - 1];
-        indexKilled = length(mobs) - indexKilled - 1;
-        int cpt =0;
-        for (int i = 0; i < length(alive); i++) {
-            if (i != indexKilled) {
-                alive[cpt] = i;
-                cpt = cpt + 1;
-            }
-        }
-        Screen list = genVerticalList(mobs, 10);
-        removeVerticalList(main, mobs, 10, main.height/2-list.height/2, main.width-maxWidth(mobs) - 30, true, alive);
-    }
-
+    /**
+     * Fonction qui genere les mobs aléatoirement
+     */
     Mob[] genMob(int nombre) {
         loadMob();
         Mob[] lsMob = new Mob[nombre];
@@ -2364,18 +2366,14 @@ class AcademicArena extends Program {
         int cpt = 0;
         while (cpt < nombre && posy_last < main.height) {
             mob = copy(randomChoice(listMob));
-            // mob.posx = main.width - mob.visuel.width - 30;
-            // mob.posy = posy_last + main.height/(nombre * 2) - mob.visuel.height/2;
-            // applyPatch(main, mob.visuel, mob.posy, main.height+mob.posx);
-            // moveTo(main, mob.visuel, mob.posy, main.height+mob.posx, mob.posy, mob.posx, 5);
             lsMob[cpt] = mob;
             cpt = cpt + 1;
-            // posy_last = posy_last + main.height/nombre;
-            refresh();
         }
         return lsMob;
     }
-
+    /**
+     * Renvoie true si tout les mob de la liste en parametre sont mort sinon false
+     */
     boolean allDead(Mob[] list) {
         boolean result = true;
         int cpt = 0;
@@ -2408,7 +2406,9 @@ class AcademicArena extends Program {
         list = new Mob[]{new Mob(), new Mob(), new Mob(), new Mob()};
         assertFalse(allDead(list));
     }
-    
+    /**
+     * Fonction qui met a jour les bar de vie des mobs
+     */
     void updateMobHpBar(Mob mob) {       
         Screen hpBar = newScreen(1, mob.hp*20/mob.initialHp);
 
@@ -2425,7 +2425,9 @@ class AcademicArena extends Program {
         }
         applyPatch(main, hpBar, mob.posy + mob.visuel.height, mob.posx);
     }
-
+    /**
+     * Function qui retourne la liste d'ecran des mobs
+     */
     Screen[] getMobScreens(Mob[] list) {
         Screen[] result = new Screen[length(list)];
         for (int i = 0; i < length(list); i++) {
@@ -2443,7 +2445,9 @@ class AcademicArena extends Program {
         Screen[] result = new Screen[]{list[0].visuel, list[1].visuel, list[2].visuel, list[3].visuel};
         assertArrayEquals(result, getMobScreens(list));
     }
-
+    /**
+     * Fonction qui enleve les mobs morts de l'ecran
+     */
     void updateMobBattle(Mob[] lsMob) {
         Mob mob;
         for (int i = 0; i < length(lsMob); i++) {
@@ -2462,6 +2466,9 @@ class AcademicArena extends Program {
         }
     }
 
+    /**
+     * Fonction qui affiche les pv du joueur
+     */
     void printPlayerHp() {
         Screen hp = newScreen(9, 50);
         String color;
@@ -2481,6 +2488,9 @@ class AcademicArena extends Program {
         
     }
 
+    /**
+     * Fonction qui affiche les attque disponible pour le joueur (les operateur)
+     */
     void printAttack() {
         int width = 50;
         int height = 20;
@@ -2498,7 +2508,9 @@ class AcademicArena extends Program {
 
     }
 
-
+    /**
+     * Fonction qui permet de selectionner l'attaque a faire
+     */
     Operation selectAttaque() {
         int choice = 0;
         Operation op = null;
@@ -2525,6 +2537,9 @@ class AcademicArena extends Program {
         return op;
     }
 
+    /**
+     * Fonction qui met a jour le combat (affichage du niveau et appelle des fonction updateMobBattle printPlayerHp )
+     */
     void updateBattle(int waweNumber, Mob[] listToDefeat) {
         Screen wawe = newScreen(10, 30);
         applyPatch(wawe, getNumber(waweNumber, ANSI_WHITE), 2,  5);
@@ -2536,7 +2551,9 @@ class AcademicArena extends Program {
         refresh();
     }
 
-
+    /**
+     * genere une vague d'ennemie et retourne true si le joueur a perdu sinon false
+     */
     boolean genWawe( int waweNumber, int difficulty) {
         Mob[] listToDefeat = genMob( waweNumber);
         boolean gameOver = false;
@@ -2561,12 +2578,8 @@ class AcademicArena extends Program {
                 print("Ce mob est deja mort ! ");
                 delay(1000);
             }
-            
             refresh();
-
             gameOver = player.hp <= 0;
-            
-            
         }
         if (gameOver) {
             player.hp = 0;
@@ -2578,6 +2591,38 @@ class AcademicArena extends Program {
 
     }
 
+    /**
+     * genere l'affichage d'une bone réponse
+     */
+    void afficheGoodAnswer() {
+        Screen text = genText("OK", ANSI_GREEN);
+        applyPatch(main, text,  main.height/2 - text.height/2, main.width/2 - text.width/2);
+        refresh();
+        delay(1000);
+        removePatch(main, text, main.height/2 - text.height/2, main.width/2 - text.width/2);
+    }
+
+    /**
+     * genere l'affichage d'une mauvaise réponse
+     */
+    void afficheWrongAnswer(int response) {
+        Screen text = genText("X", ANSI_RED);
+        Screen textR = getNumber(response, ANSI_WHITE);
+        applyPatch(main, text, main.height/2 - text.height/2, main.width/2 - text.width/2);
+        if (SHOW_RESPONSE) {
+            applyPatch(main, textR, main.height/2 - textR.height/2 + 5, main.width/2 - text.width/2 );
+        }
+        refresh();
+        delay(1000);
+        removePatch(main, text, main.height/2 - text.height/2, main.width/2 - text.width/2);
+        if (SHOW_RESPONSE) {
+            removePatch(main, textR, main.height/2 - textR.height/2 + 5, main.width/2 - text.width/2 );
+        }
+    }
+
+    /**
+     * Effectue l'attaque du joueur sur le mob si le joueur repond correctement
+     */
     void attaquerMob(Operation op, int level, Mob mob) {
         int nb1 = (int) ((random() * 10) * (level+1));
         int nb2 = (int) ((random() * 10) * (level+1));
@@ -2585,33 +2630,15 @@ class AcademicArena extends Program {
             nb2 = 1;
         }
         int response;
-        Screen text;
         printCalcul(nb1, nb2, op);
         response = chooseNumber(MININT, MAXINT);
         removecalcul(nb1, nb2, op);
         if (calculReussi(nb1, nb2, op, response)) {
-            text = genText("OK", ANSI_GREEN);
-            applyPatch(main, text,  main.height/2 - text.height/2, main.width/2 - text.width/2);
+            afficheGoodAnswer();
             mob.hp = mob.hp - damageDoneToMob(mob, op);
-            refresh();
-            delay(1000);
-            removePatch(main, text, main.height/2 - text.height/2, main.width/2 - text.width/2);
-
         }
         else {
-            text = genText("X", ANSI_RED);
-            Screen textR = getNumber(calculResult(nb1, nb2, op), ANSI_WHITE);
-            applyPatch(main, text, main.height/2 - text.height/2, main.width/2 - text.width/2);
-            if (SHOW_RESPONSE) {
-                applyPatch(main, textR, main.height/2 - textR.height/2 + 5, main.width/2 - text.width/2 );
-            }
-            refresh();
-            delay(1000);
-            removePatch(main, text, main.height/2 - text.height/2, main.width/2 - text.width/2);
-            if (SHOW_RESPONSE) {
-                removePatch(main, textR, main.height/2 - textR.height/2 + 5, main.width/2 - text.width/2 );
-            }
-            
+            afficheWrongAnswer(calculResult(nb1, nb2, op));
         }
         if (mob.hp <= 0) {
             mob.hp = 0;
@@ -2619,37 +2646,50 @@ class AcademicArena extends Program {
         
     }
 
-   boolean questionBonus() {
-        Question q = randomChoice(listQuestion);
-        Screen saveScreen = copy(main);
-        removePatch(main, main, 0, 0);
-        Screen text = fitText(main, q.question);
+    /**
+     * Affiche la question bonus a l'ecran
+     */
+    void afficheQuestionBonus(String question) {
+        Screen text = fitText(main, question);
         Screen title = genText("Question Bonus", ANSI_WHITE);
         applyPatch(main, title, 2, main.width/2-title.width/2);
         applyPatch(main, text, main.height/2-text.height/2, main.width/2-text.width/2);
         refresh();
+    }
+    /**
+     * retire la question bonus de l'ecran
+     */
+    void removeQuestionBonus(String question) {
+        Screen text = fitText(main, question);
+        Screen title = genText("Question Bonus", ANSI_WHITE);
+        removePatch(main, title, 2, main.width/2-title.width/2);
+        removePatch(main, text, main.height/2-text.height/2, main.width/2-text.width/2);
+        refresh();
+    }
+    /**
+     * genere une question bonus et retourne true si le joueur repond correctement sinon false
+     */
+    boolean questionBonus() {
+        Question q = randomChoice(listQuestion);
+        Screen saveScreen = copy(main);
+        removePatch(main, main, 0, 0);
+        afficheQuestionBonus(q.question);
         String response = readString();
-        applyPatch(main, saveScreen, 0, 0);
-        //return equals(response, q.reponse);
+        removeQuestionBonus(response);
         if(equals(response,q.reponse)){ 
+            afficheGoodAnswer();
+            applyPatch(main,saveScreen,0,0);
             return true;   
         }else{
             removePatch(main, main, 0, 0);
-            Screen title2=genText("Dommage",ANSI_RED); 
-            Screen goodAnswer = genText("reponse ",ANSI_WHITE);
-            Screen goodAnswer2 = getNumber(StringToInt(q.reponse),ANSI_WHITE);
-            applyPatch(main, title2, main.height/2-title2.height/2, main.width/2-title.width/2);
-            if (SHOW_RESPONSE) {
-                applyPatch(main, goodAnswer, main.height/2 + title2.height , main.width/2-goodAnswer.width/2 - goodAnswer2.width/2);
-                applyPatch(main, goodAnswer2, main.height/2 + title2.height , main.width/2 -goodAnswer.width/2 + goodAnswer.width);
-            }
-            refresh();
-            delay(3000);
+            afficheWrongAnswer(StringToInt(q.reponse));
             applyPatch(main,saveScreen,0,0);
             return false;
         }
    }
-
+   /**
+     * Affiche dans l'ecran le niveau actuel
+     */
     void printLevel(int level) {
         Screen levelScreen = newScreen(9, 55);
         Screen text = genText("Level ", ANSI_WHITE);
@@ -2658,18 +2698,23 @@ class AcademicArena extends Program {
         applyPatch(main, levelScreen, 0, 0);
         refresh();
     }
-
+    /**
+     * genre un niveau et retourne true si le joueur a perdu sinon false
+     */
     boolean genLevel(int level) {
         int cpt = 0;
         boolean gameOver = false;
         printLevel(level);
-        while (cpt < 2 && !gameOver) {
+        while (cpt < 1 && !gameOver) {
             gameOver = genWawe( cpt+1, level);
             cpt = cpt + 1;
         }
         return gameOver;
     }
 
+    /**
+     * demarre un combat de boss et retourne true si le joueur a perdu sinon false
+     */
     boolean genBoss(int level) {
         boolean gameOver = false;
         Screen levelScreen = newScreen(9, 55);
@@ -2699,7 +2744,9 @@ class AcademicArena extends Program {
     }
 
     
-
+    /**
+     * affcihe le calcul a l'ecran
+     */
     void printCalcul(int nb1, int nb2, Operation op) {
         Screen[] listNb = new Screen[2];
         listNb[0] = getNumber(nb1, ANSI_TEXT_DEFAULT_COLOR);
@@ -2712,7 +2759,9 @@ class AcademicArena extends Program {
         applyPatch(main, calcul, main.height/2 - calcul.height/2, main.width/2 - calcul.width/2);
         refresh();
     }
-
+    /**
+     * retire le calcul de l'ecran
+     */
     void removecalcul(int nb1, int nb2, Operation op) {
         Screen[] listNb = new Screen[2];
         listNb[0] = getNumber(nb1, ANSI_TEXT_DEFAULT_COLOR);
@@ -2726,7 +2775,9 @@ class AcademicArena extends Program {
         refresh();
     }
 
-
+    /**
+     * determine si le calcul est réussi ou non
+     */
     boolean calculReussi(int nb1, int nb2, Operation op, int response) {
         boolean result = false;
         switch (op) {
@@ -2759,7 +2810,9 @@ class AcademicArena extends Program {
         assertFalse(calculReussi(1, 1, Operation.MULTIPLICATION, 2));
         assertFalse(calculReussi(1, 1, Operation.DIVISION, 2));
     }
-
+    /**
+     * Retourne le resultat du calcul passer en parametre
+     */
     int calculResult(int nb1, int nb2, Operation op) {
         int result;
         switch (op) {
@@ -2782,9 +2835,10 @@ class AcademicArena extends Program {
         return result;
     }
     
-
-    void chooseBonus() {
-        Screen saveScreen = copy(main);
+    /**
+     * affiche un bonus
+     */
+    void afficheBonus() {
         Screen text = genText("Choisi un bonus", ANSI_WHITE);
         Screen heal = loadASCII(HEART, ANSI_RED);
         Screen atk = loadASCII(SWORD, ANSI_WHITE);
@@ -2793,6 +2847,13 @@ class AcademicArena extends Program {
         applyPatch(main, heal, main.height/2 - heal.height/2 + 2, main.width/2 - heal.width/2 - main.width/8);
         applyPatch(main, atk, main.height/2 - atk.height/2 + 2, main.width/2 + atk.width/2 );
         refresh();
+    }
+    /**
+     * Permet de choisir un bonus
+     */
+    void chooseBonus() {
+        Screen saveScreen = copy(main);
+        afficheBonus();
         int choice = chooseNumber(1, 2);
         if (choice == 1) {
             player.hp = player.hp + 50;
@@ -2806,12 +2867,16 @@ class AcademicArena extends Program {
     }
 
 
-
+    /**
+     * retourne un int representant le nombre de degat que le mob inflige au joueur
+     */
     int damageToPlayer(int level, Mob mob) {
         playSound(HIT_SOUND);
-        return (int) (random()*mob.atk*level) * 3;
+        return (int) (random()*mob.atk*level) * DIFFICULTY;
     }
-
+    /**
+     * retourne un int representant le nombre de degat que le joueur inflige au mob
+     */
     int damageDoneToMob(Mob mob, Operation op) {
         if (op == mob.faiblesse) {
             print("Coup critique ! ");
@@ -2829,7 +2894,9 @@ class AcademicArena extends Program {
     ////  Score funtions //
     ///////////////////////
     
-
+    /**
+     * determine si un score est un nouveau record personnel
+     */
     boolean newPersonnalBestScore(int score, String pseudo) {
         boolean result = false;
         for (int i = 0; i < length(listScore); i++) {
@@ -2851,7 +2918,9 @@ class AcademicArena extends Program {
         assertTrue(newPersonnalBestScore(2, "c"));
         assertTrue(newPersonnalBestScore(3, "d"));
     }
-
+    /**
+     * determine si le joueur est un nouveau joueur
+     */
     boolean isNewPlayer(String pseudo) {
         boolean result = true;
         for (int i = 0; i < length(listScore); i++) {
@@ -2873,7 +2942,9 @@ class AcademicArena extends Program {
         assertTrue(isNewPlayer("g"));
         assertTrue(isNewPlayer("h"));
     }
-
+    /**
+     * change le score du joueur pour le score donner en parametre
+     */
     void changePersonnalScore(int score, String pseudo) {
         for (int i = 0; i < length(listScore); i++) {
             if (equals(listScore[i].pseudo, pseudo)) {
@@ -2894,7 +2965,9 @@ class AcademicArena extends Program {
         assertEquals(listScore[2].score, 30);
         assertEquals(listScore[3].score, 40);
     }
-
+    /**
+     * ajoute un score a la liste des scores
+     */
     void addScore(String pseudo, int score) {
         Score[] newListScore = new Score[length(listScore) + 1];
         for (int i = 0; i < length(listScore); i++) {
@@ -2921,7 +2994,9 @@ class AcademicArena extends Program {
     }
 
     
-
+    /**
+     * affiche le tableau des scores
+     */
     void printScoreTab() {
         Screen scoreTab = newScreen(main.height, main.width/2 + main.width/4);
         Screen title = genText("Score", ANSI_WHITE);    
@@ -2940,7 +3015,9 @@ class AcademicArena extends Program {
         refresh();
 
     }
-
+    /**
+     * fonction qui effectue le tri du tableau des scores
+     */
     void sortScore() {
         Score temp;
         for (int i = 0; i < length(listScore); i++) {
@@ -2963,6 +3040,9 @@ class AcademicArena extends Program {
         assertEquals(listScore[3].score, 1);
     }
 
+    /**
+     * fonction qui determine le chemin d'une lettre en fonction de son caractere
+     */
     String getletterPath(char c) {
         if (c == ' ') {
             return LETTER_DIR + "/space.txt";
@@ -2971,7 +3051,9 @@ class AcademicArena extends Program {
     }
 
     // game events graphics
-
+    /**
+     * réalise l'affichage de l'ecran titre
+     */
     void genTitleScreen(){
         Screen partA = loadASCII(LOGO_PART_A, ANSI_RED);
         Screen partB = loadASCII(LOGO_PART_B, ANSI_YELLOW);
@@ -2996,7 +3078,9 @@ class AcademicArena extends Program {
             refresh();
         }
     }
-
+    /**
+     * retourne un int representant le meilleur score du joueur
+     */
     int getPlayerBestScore(String pseudo) {
         extensions.CSVFile f = loadCSV(SCORE_FILE);
         int result = 0;
@@ -3009,7 +3093,9 @@ class AcademicArena extends Program {
         }
         return result;
     }
-
+    /**
+     * retourne un tableau de joueur representant les joueurs du fichier score
+     */
     Player[] getPlayers() {
         extensions.CSVFile f = loadCSV(SCORE_FILE);
         Player[] table = new Player[rowCount(f)-1];
@@ -3018,7 +3104,9 @@ class AcademicArena extends Program {
         }
         return table;
     }
-
+    /**
+     * genere l'ecran de selection du personnage
+     */
     Screen chooseCharacter() {
         Screen choice = newScreen(main.height, main.width);
         Screen prompt = newScreen(main.height/4, main.width);
@@ -3043,7 +3131,9 @@ class AcademicArena extends Program {
         return list_perso[r-1];
     }
 
-
+    /**
+     * actualise l'ecran principale
+     */
     void refresh() {
         drawHorizontalLine(main, 0, ANSI_TEXT_DEFAULT_COLOR);
         drawHorizontalLine(main, main.height-1, ANSI_TEXT_DEFAULT_COLOR);
@@ -3084,6 +3174,7 @@ class AcademicArena extends Program {
             removePatch(main,main, 0,0);
             applyPatch(main,SR,main.height/2-SR.height/2,main.width/2-SR.width/2);
             refresh();
+            delay(1000);
             reset();
         }
         if (isNewPlayer(player.pseudo)) {
