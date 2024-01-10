@@ -2705,7 +2705,7 @@ class AcademicArena extends Program {
         int cpt = 0;
         boolean gameOver = false;
         printLevel(level);
-        while (cpt < 1 && !gameOver) {
+        while (cpt < 2 && !gameOver) {
             gameOver = genWawe( cpt+1, level);
             cpt = cpt + 1;
         }
@@ -2900,7 +2900,7 @@ class AcademicArena extends Program {
     boolean newPersonnalBestScore(int score, String pseudo) {
         boolean result = false;
         for (int i = 0; i < length(listScore); i++) {
-            if (listScore[i].score > score && equals(listScore[i].pseudo, pseudo)) {
+            if (listScore[i].score < score && equals(listScore[i].pseudo, pseudo)) {
                 result = true;
             }
         }
