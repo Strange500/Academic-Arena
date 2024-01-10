@@ -1,8 +1,6 @@
 Academic Arena
 ===========
 
-
-
 # Présentation de Academic Arena
 
 Academix Arena est un jeu ludo-pédagogique destiné aux élèves d'école primaire.<br>
