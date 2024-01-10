@@ -1,5 +1,7 @@
 Academic Arena
 ===========
+Ce jeu est un projet réaliser dans le cadre de la SAE ??? du BUT Informatique de l'IUT de villeneuve d'Asq
+
 
 # Présentation de Academic Arena
 
@@ -34,3 +36,6 @@ Développé par Florian Pollet & Roget Benjamin
 Contacts : 
  - florian.pollet.etu@univ-lille.fr 
  - benjamin.roget.etu@univ-lille.fr
+
+<img src="https://iut-b.univ-lille.fr/wp-content/uploads/2022/01/ulille.footer.png" height=30>
+
