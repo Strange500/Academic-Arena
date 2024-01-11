@@ -66,8 +66,8 @@ Vous pouvez configurer le jeux en modifiant le fichier AcademicArena.conf
 
 Développé par Florian Pollet & Roget Benjamin
 Contacts : 
- - florian.pollet.etu(AT)univ-lille.fr 
- - benjamin.roget.etu(AT)univ-lille.fr
+ - florian.pollet.etu(hate)univ-lille.fr 
+ - benjamin.roget.etu(hate)univ-lille.fr
 
 <img src="https://iut-b.univ-lille.fr/wp-content/uploads/2022/01/ulille.footer.png" height=30>
 
