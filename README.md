@@ -1,6 +1,7 @@
 Academic Arena
 ===========
 Ce jeu est un projet réaliser dans le cadre de la SAE S1.02 du BUT Informatique de l'IUT de villeneuve d'Asq.
+<a href="https://github.com/Strange500/Academic-Arena">Lien vers le gitHub du projet</a>
 
 
 # Présentation de Academic Arena
